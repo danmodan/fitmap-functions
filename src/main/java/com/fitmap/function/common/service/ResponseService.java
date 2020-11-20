@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.StreamSupport;
 
 import javax.validation.ConstraintViolationException;
 
@@ -108,7 +107,7 @@ public class ResponseService {
             c.getPropertyPath();
             map.put("error_message", c.getMessage());
             map.put("rejected_value", c.getInvalidValue());
-            map.put("field", StreamSupport.stream(c.getPropertyPath().spliterator(), false).reduce((first, second) -> second).get().getName());
+            map.put("field", c.getPropertyPath().toString());
             errors.add(map);
         });
 
@@ -138,7 +137,7 @@ public class ResponseService {
 
     public static void fillResponseWithStatus(HttpResponse response, HttpStatus status) {
 
-        fillResponseWithStatus(response, status, MediaType.APPLICATION_JSON_VALUE);
+        fillResponseWithStatus(response, status, MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
     public static ErrorResponse createErrorResponse(HttpRequest request, HttpStatus status) {

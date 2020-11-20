@@ -39,7 +39,7 @@ public class CheckRequestContentTypeService {
 
     public static void checkApplicationJsonContentType(HttpRequest request) {
 
-        checkContentType(request, MediaType.APPLICATION_JSON);
+        checkContentType(request, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON_UTF8);
     }
 
 }
