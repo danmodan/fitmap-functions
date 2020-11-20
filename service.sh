@@ -22,6 +22,7 @@ case $1 in
                                 --runtime java11 \
                                 --trigger-http \
                                 --max-instances 80 \
+                                --set-env-vars=GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
         ;;
     *)
         echo -e "Invalid option"
