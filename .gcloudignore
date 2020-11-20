@@ -1,0 +1,13 @@
+#!include:.gitignore
+.gcloudignore
+.git
+.gitignore
+.env
+docker-compose.yml
+service.sh
+gcloudignore/
+src/test/
+src/main/java/com/fitmap/function/common/config/
+!src/main/java/com/fitmap/function/common/config/ValidatorConfig.java
+!src/main/java/com/fitmap/function/common/config/ObjectMapperConfig.java
+!src/main/java/com/fitmap/function/common/config/SystemTimeZoneConfig.java
