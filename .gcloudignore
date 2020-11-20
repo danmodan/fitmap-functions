@@ -16,3 +16,7 @@ src/main/java/com/fitmap/function/setroles/
 #!src/main/java/com/fitmap/function/common/config/FirebaseAuthConfig.java
 #!src/main/java/com/fitmap/function/setroles/
 
+### gym-context ###
+src/main/java/com/fitmap/function/gymcontext/
+#!src/main/java/com/fitmap/function/common/config/FirestoreConfig.java
+#!src/main/java/com/fitmap/function/gymcontext/

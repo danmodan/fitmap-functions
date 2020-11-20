@@ -22,3 +22,18 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.setroles.v1.SetRolesFunction
 
+  fitmap.function.gym-context.crud-gym:
+    container_name: fitmap.function.gym-context.crud-gym
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9053:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudGymFunction
