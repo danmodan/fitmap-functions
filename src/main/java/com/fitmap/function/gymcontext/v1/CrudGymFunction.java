@@ -3,6 +3,8 @@ package com.fitmap.function.gymcontext.v1;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.validation.ConstraintViolationException;
 
@@ -31,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CrudGymFunction implements HttpFunction {
+
+    private static final Logger logger = Logger.getLogger(CrudGymFunction.class.getName());
 
     static {
 
@@ -67,7 +71,7 @@ public class CrudGymFunction implements HttpFunction {
           catch (UnsupportedMediaTypeStatusException e) {ResponseService.answerUnsupportedMediaType(request, response, e);}
           catch (HttpMessageNotReadableException e) {ResponseService.answerBadRequest(request, response, e);}
           catch (ConstraintViolationException e) {ResponseService.answerBadRequest(request, response, e);}
-          catch (Exception e) {e.printStackTrace(); ResponseService.answerInternalServerError(request, response, e);}
+          catch (Exception e) { logger.log(Level.SEVERE, e.getMessage(), e); ResponseService.answerInternalServerError(request, response, e); }
 
     }
 

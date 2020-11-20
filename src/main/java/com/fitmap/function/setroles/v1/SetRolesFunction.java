@@ -1,5 +1,8 @@
 package com.fitmap.function.setroles.v1;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.validation.ConstraintViolationException;
 
 import com.fitmap.function.common.config.FirebaseAuthConfig;
@@ -24,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class SetRolesFunction implements HttpFunction {
+
+    private static final Logger logger = Logger.getLogger(SetRolesFunction.class.getName());
 
     static {
 
@@ -57,7 +62,7 @@ public class SetRolesFunction implements HttpFunction {
           catch (UnsupportedMediaTypeStatusException e) { ResponseService.answerUnsupportedMediaType(request, response, e); }
           catch (HttpMessageNotReadableException e) { ResponseService.answerBadRequest(request, response, e); }
           catch (ConstraintViolationException e) { ResponseService.answerBadRequest(request, response, e); }
-          catch (Exception e) { ResponseService.answerInternalServerError(request, response, e); }
+          catch (Exception e) { logger.log(Level.SEVERE, e.getMessage(), e); ResponseService.answerInternalServerError(request, response, e); }
 
     }
 

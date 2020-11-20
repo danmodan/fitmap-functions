@@ -2,6 +2,8 @@ package com.fitmap.function.gymcontext.service;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.fitmap.function.common.exception.TerminalException;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class GymService {
+
+    private static final Logger logger = Logger.getLogger(GymService.class.getName());
 
     private static final String GYMS_COLLECTION = "gyms";
     private static final String CONTACTS_COLLECTION = "contacts";
@@ -58,6 +62,8 @@ public class GymService {
             return gym;
 
         } catch (Exception e) {
+
+            logger.log(Level.SEVERE, e.getMessage(), e);
 
             throw new TerminalException(e.getMessage(), HttpStatus.CONFLICT);
         }

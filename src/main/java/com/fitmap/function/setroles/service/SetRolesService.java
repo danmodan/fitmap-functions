@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fitmap.function.common.exception.TerminalException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,6 +20,8 @@ import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
 public class SetRolesService {
+
+    private static final Logger logger = Logger.getLogger(SetRolesService.class.getName());
 
     private static final String ROLES_KEY = "roles";
 
@@ -61,7 +65,10 @@ public class SetRolesService {
         try {
 
             return firebaseAuth.verifyIdToken(idToken);
+
         } catch (Exception e) {
+
+            logger.log(Level.SEVERE, e.getMessage(), e);
 
             throw new TerminalException("The IDToken has expired.", HttpStatus.UNAUTHORIZED);
         }
