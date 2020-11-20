@@ -128,7 +128,7 @@ class SetRolesFunctionTest {
 
             assertThat(actual)
                 .extracting("status", "statusError", "message", "path")
-                .containsExactly(415, "Unsupported Media Type", "415 UNSUPPORTED_MEDIA_TYPE \"Content type 'application/pdf' not supported\". Allowed Content-Type are [application/json]", "/test");
+                .containsExactly(415, "Unsupported Media Type", "415 UNSUPPORTED_MEDIA_TYPE \"Content type 'application/pdf' not supported\". Allowed Content-Type are [application/json, application/json;charset=UTF-8]", "/test");
 
             assertThat(actual).extracting("timestamp").isNotNull();
         }
