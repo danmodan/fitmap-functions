@@ -20,6 +20,7 @@ services:
       - $HOME/gcp:$HOME/gcp
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.setroles.v1.SetRolesFunction
 
   fitmap.function.gym-context.crud-gym:
@@ -36,4 +37,5 @@ services:
       - $HOME/gcp:$HOME/gcp
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudGymFunction
