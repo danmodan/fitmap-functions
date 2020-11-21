@@ -54,7 +54,7 @@ public class ReadRequestService {
 
     public static String getUserId(HttpRequest request) {
 
-        return request.getFirstHeader("USER_ID").orElseThrow(() -> new TerminalException("USER_ID header is mandatory.", HttpStatus.BAD_REQUEST));
+        return request.getFirstHeader("User_id").orElseThrow(() -> new TerminalException("User_id header is mandatory.", HttpStatus.BAD_REQUEST));
     }
 
 }
