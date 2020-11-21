@@ -1,7 +1,6 @@
 package com.fitmap.function.setroles.v1;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.validation.ConstraintViolationException;
 
@@ -24,11 +23,11 @@ import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
 @RequiredArgsConstructor
 public class SetRolesFunction implements HttpFunction {
-
-    private static final Logger logger = Logger.getLogger(SetRolesFunction.class.getName());
 
     static {
 
@@ -62,7 +61,7 @@ public class SetRolesFunction implements HttpFunction {
           catch (UnsupportedMediaTypeStatusException e) { ResponseService.answerUnsupportedMediaType(request, response, e); }
           catch (HttpMessageNotReadableException e) { ResponseService.answerBadRequest(request, response, e); }
           catch (ConstraintViolationException e) { ResponseService.answerBadRequest(request, response, e); }
-          catch (Exception e) { logger.log(Level.SEVERE, e.getMessage(), e); ResponseService.answerInternalServerError(request, response, e); }
+          catch (Exception e) { log.log(Level.SEVERE, e.getMessage(), e); ResponseService.answerInternalServerError(request, response, e); }
 
     }
 
