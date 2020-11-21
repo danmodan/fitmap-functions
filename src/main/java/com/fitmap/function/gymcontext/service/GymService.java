@@ -3,7 +3,6 @@ package com.fitmap.function.gymcontext.service;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.fitmap.function.common.exception.TerminalException;
@@ -17,11 +16,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
 @RequiredArgsConstructor
 public class GymService {
-
-    private static final Logger logger = Logger.getLogger(GymService.class.getName());
 
     private static final String GYMS_COLLECTION = "gyms";
     private static final String CONTACTS_COLLECTION = "contacts";
@@ -29,7 +28,7 @@ public class GymService {
 
     private final Firestore db;
 
-    public Gym create(final Gym gym) {
+    public Gym create(Gym gym) {
 
         var now = new Date();
         gym.setCreatedAt(now);
@@ -51,11 +50,11 @@ public class GymService {
             return Pair.of(contact, ref);
         }).collect(Collectors.toSet());
 
+        CheckConstraintsRequestBodyService.checkConstraints(gym);
+
         batch.create(gymDocRef, gym);
         addressPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
         contactsPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
-
-        CheckConstraintsRequestBodyService.checkConstraints(gym);
 
         try {
 
@@ -65,7 +64,7 @@ public class GymService {
 
         } catch (Exception e) {
 
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            log.log(Level.SEVERE, e.getMessage(), e);
 
             throw new TerminalException(e.getMessage(), HttpStatus.CONFLICT);
         }

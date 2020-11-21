@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.validation.ConstraintViolationException;
 
@@ -16,9 +15,8 @@ import com.fitmap.function.common.service.CheckRequestContentTypeService;
 import com.fitmap.function.common.service.ReadRequestService;
 import com.fitmap.function.common.service.ResponseService;
 import com.fitmap.function.gymcontext.domain.Gym;
-import com.fitmap.function.gymcontext.mapper.GymMapper;
 import com.fitmap.function.gymcontext.service.GymService;
-import com.fitmap.function.gymcontext.v1.payload.request.CreateGymRequestDto;
+import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
@@ -30,11 +28,11 @@ import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
 @RequiredArgsConstructor
 public class CrudGymFunction implements HttpFunction {
-
-    private static final Logger logger = Logger.getLogger(CrudGymFunction.class.getName());
 
     static {
 
@@ -71,7 +69,7 @@ public class CrudGymFunction implements HttpFunction {
           catch (UnsupportedMediaTypeStatusException e) {ResponseService.answerUnsupportedMediaType(request, response, e);}
           catch (HttpMessageNotReadableException e) {ResponseService.answerBadRequest(request, response, e);}
           catch (ConstraintViolationException e) {ResponseService.answerBadRequest(request, response, e);}
-          catch (Exception e) { logger.log(Level.SEVERE, e.getMessage(), e); ResponseService.answerInternalServerError(request, response, e); }
+          catch (Exception e) { log.log(Level.SEVERE, e.getMessage(), e); ResponseService.answerInternalServerError(request, response, e); }
 
     }
 
@@ -87,7 +85,7 @@ public class CrudGymFunction implements HttpFunction {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, CreateGymRequestDto.class);
+        var dto = ReadRequestService.getBody(request, CreateRequestDtos.Gym.class);
 
         CheckConstraintsRequestBodyService.checkConstraints(dto);
 
@@ -97,11 +95,11 @@ public class CrudGymFunction implements HttpFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.CREATED);
     }
 
-    private Gym create(final CreateGymRequestDto dto, final String gymId) {
+    private Gym create(final CreateRequestDtos.Gym dto, final String gymId) {
 
-        var addresses = Objects.requireNonNullElse(dto.getAddresses(), new ArrayList<CreateGymRequestDto.Address>());
+        var addresses = Objects.requireNonNullElse(dto.getAddresses(), new ArrayList<CreateRequestDtos.Address>());
 
-        var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<CreateGymRequestDto.Contact>());
+        var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<CreateRequestDtos.Contact>());
 
         var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
 
@@ -112,7 +110,7 @@ public class CrudGymFunction implements HttpFunction {
         dto.setSports(sports);
         dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
-        var gym = GymMapper.map(dto, gymId);
+        var gym = Gym.from(dto, gymId);
 
         return gymService.create(gym);
     }
