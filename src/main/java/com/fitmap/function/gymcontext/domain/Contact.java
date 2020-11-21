@@ -1,5 +1,12 @@
 package com.fitmap.function.gymcontext.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -10,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.gymcontext.v1.payload.request.EditRequestDtos;
 import com.google.cloud.firestore.annotation.DocumentId;
 
 import lombok.AllArgsConstructor;
@@ -69,6 +78,38 @@ public class Contact {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public static Contact from(CreateRequestDtos.Contact dto) {
+
+        return Contact
+            .builder()
+            .name(dto.getName())
+            .email(dto.getEmail())
+            .phone(dto.getPhone())
+            .whatsapp(dto.getWhatsapp())
+            .build();
+    }
+
+    public static Contact from(EditRequestDtos.Contact dto) {
+
+        return Contact
+            .builder()
+            .id(dto.getId())
+            .name(dto.getName())
+            .email(dto.getEmail())
+            .phone(dto.getPhone())
+            .whatsapp(dto.getWhatsapp())
+            .build();
+    }
+
+    public static <T> List<Contact> from(Collection<T> dtos, Function<T, Contact> mapper) {
+
+        return dtos
+            .stream()
+            .filter(Objects::nonNull)
+            .map(mapper)
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
 }

@@ -1,5 +1,12 @@
 package com.fitmap.function.gymcontext.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -8,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.gymcontext.v1.payload.request.EditRequestDtos;
 import com.google.cloud.firestore.annotation.DocumentId;
 
 import lombok.AllArgsConstructor;
@@ -72,6 +81,42 @@ public class Address {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public static Address from(CreateRequestDtos.Address dto) {
+
+        return Address
+            .builder()
+            .zipCode(dto.getZipCode())
+            .publicPlace(dto.getPublicPlace())
+            .complement(dto.getComplement())
+            .district(dto.getDistrict())
+            .city(dto.getCity())
+            .federalUnit(dto.getFederalUnit())
+            .build();
+    }
+
+    public static Address from(EditRequestDtos.Address dto) {
+
+        return Address
+            .builder()
+            .id(dto.getId())
+            .zipCode(dto.getZipCode())
+            .publicPlace(dto.getPublicPlace())
+            .complement(dto.getComplement())
+            .district(dto.getDistrict())
+            .city(dto.getCity())
+            .federalUnit(dto.getFederalUnit())
+            .build();
+    }
+
+    public static <T> List<Address> from(Collection<T> dtos, Function<T, Address> mapper) {
+
+        return dtos
+            .stream()
+            .filter(Objects::nonNull)
+            .map(mapper)
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
 }

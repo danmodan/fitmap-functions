@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.gymcontext.v1.payload.request.EditRequestDtos;
 import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.Exclude;
 
@@ -126,6 +128,34 @@ public class Gym {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public static Gym from(CreateRequestDtos.Gym dto, String gymId) {
+
+        return Gym
+            .builder()
+            .id(gymId)
+            .contacts(Contact.from(dto.getContacts(), Contact::from))
+            .addresses(Address.from(dto.getAddresses(), Address::from))
+            .biography(dto.getBiography())
+            .instagram(dto.getInstagram())
+            .sports(dto.getSports())
+            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .build();
+    }
+
+    public static Gym from(EditRequestDtos.Gym dto, String gymId) {
+
+        return Gym
+            .builder()
+            .id(gymId)
+            .contacts(Contact.from(dto.getContacts(), Contact::from))
+            .addresses(Address.from(dto.getAddresses(), Address::from))
+            .biography(dto.getBiography())
+            .instagram(dto.getInstagram())
+            .sports(dto.getSports())
+            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .build();
     }
 
 }

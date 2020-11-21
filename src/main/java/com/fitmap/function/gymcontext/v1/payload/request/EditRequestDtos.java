@@ -2,6 +2,7 @@ package com.fitmap.function.gymcontext.v1.payload.request;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,30 +23,37 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
-@Setter
-@ToString
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonNaming(value = SnakeCaseStrategy.class)
-@JsonInclude(value = Include.NON_ABSENT)
-public class CreateGymRequestDto {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class EditRequestDtos {
 
-    @Size(max = 400)
-    private String instagram;
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonNaming(value = SnakeCaseStrategy.class)
+    @JsonInclude(value = Include.NON_ABSENT)
+    public static class Gym {
 
-    @Size(max = 2000)
-    private String biography;
+        @Size(max = 400)
+        private String instagram;
 
-    private List<@NotNull Contact> contacts;
+        @Size(max = 2000)
+        private String biography;
 
-    private List<@NotNull Address> addresses;
+        @Valid
+        private List<@NotNull Contact> contacts;
 
-    private List<@NotBlank String> sports;
+        @Valid
+        private List<@NotNull Address> addresses;
 
-    private List<@NotBlank String> galleryPicturesUrls;
+        private List<@NotBlank String> sports;
+
+        private List<@NotBlank String> galleryPicturesUrls;
+
+    }
 
     @Getter
     @Setter
@@ -56,6 +65,9 @@ public class CreateGymRequestDto {
     @JsonNaming(value = SnakeCaseStrategy.class)
     @JsonInclude(value = Include.NON_ABSENT)
     public static class Contact {
+
+        @NotBlank
+        private String id;
 
         @Size(max = 500)
         private String name;
@@ -81,6 +93,9 @@ public class CreateGymRequestDto {
     @JsonNaming(value = SnakeCaseStrategy.class)
     @JsonInclude(value = Include.NON_ABSENT)
     public static class Address {
+
+        @NotBlank
+        private String id;
 
         @Size(max = 50)
         private String zipCode;
