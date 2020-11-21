@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.fitmap.function.common.exception.TerminalException;
 import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
+import com.fitmap.function.gymcontext.domain.Address;
+import com.fitmap.function.gymcontext.domain.Contact;
 import com.fitmap.function.gymcontext.domain.Gym;
 import com.google.cloud.firestore.Firestore;
 
@@ -71,9 +73,25 @@ public class GymService {
 
     public Gym find(String gymId) throws InterruptedException, ExecutionException {
 
-        var gym = db.collection(GYMS_COLLECTION).document(gymId).get().get().toObject(Gym.class);
+        var docRef = db.collection(GYMS_COLLECTION).document(gymId);
 
-        if (gym != null) {
+        var gymDoc = docRef.get().get();
+
+        if (gymDoc.exists()) {
+
+            var gym = gymDoc.toObject(Gym.class);
+
+            var contactsColl = docRef.collection(CONTACTS_COLLECTION).get().get();
+
+            var contacts = contactsColl.getDocuments().stream().map(doc -> doc.toObject(Contact.class)).collect(Collectors.toList());
+
+            gym.addContacts(contacts);
+
+            var addressColl = docRef.collection(ADDRESS_COLLECTION).get().get();
+
+            var address = addressColl.getDocuments().stream().map(doc -> doc.toObject(Address.class)).collect(Collectors.toList());
+
+            gym.addAddresses(address);
 
             return gym;
         }

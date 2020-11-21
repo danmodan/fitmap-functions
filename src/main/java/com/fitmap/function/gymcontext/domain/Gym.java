@@ -54,15 +54,19 @@ public class Gym {
     @Size(max = 2000)
     private String biography;
 
-    private List<@NotBlank String> galleryPicturesUrls;
+    @Builder.Default
+    private List<@NotBlank String> galleryPicturesUrls = new ArrayList<>();
 
-    private List<@NotBlank String> sports;
+    @Builder.Default
+    private List<@NotBlank String> sports = new ArrayList<>();
 
     @Getter(onMethod = @__({ @Exclude }))
-    private List<@NotNull Contact> contacts;
+    @Builder.Default
+    private List<@NotNull Contact> contacts = new ArrayList<>();
 
     @Getter(onMethod = @__({ @Exclude }))
-    private List<@NotNull Address> addresses;
+    @Builder.Default
+    private List<@NotNull Address> addresses = new ArrayList<>();
 
     public void addSports(List<String> sports) {
 
@@ -71,6 +75,15 @@ public class Gym {
         this.sports = Objects.requireNonNullElse(this.sports, new ArrayList<String>());
 
         this.sports.addAll(newSports);
+    }
+
+    public void addGalleryPicturesUrls(List<String> galleryPicturesUrls) {
+
+        var newGalleryPicturesUrls = Objects.requireNonNullElse(galleryPicturesUrls, new ArrayList<String>());
+
+        this.galleryPicturesUrls = Objects.requireNonNullElse(this.galleryPicturesUrls, new ArrayList<String>());
+
+        this.galleryPicturesUrls.addAll(newGalleryPicturesUrls);
     }
 
     public void addContacts(List<Contact> contacts) {
