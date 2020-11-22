@@ -38,6 +38,24 @@ case $1 in
     deploy-v1-gym-crud-addresses)
         deploy_http_function v1-gym-crud-addresses com.fitmap.function.gymcontext.v1.CrudAddressFunction
         ;;
+    deploy-v1-personaltrainer-crud-personaltrainer)
+        deploy_http_function v1-personaltrainer-crud-personaltrainer com.fitmap.function.personaltrainercontext.v1.CrudPersonalTrainerFunction
+        ;;
+    deploy-v1-personaltrainer-crud-contacts)
+        deploy_http_function v1-personaltrainer-crud-contacts com.fitmap.function.personaltrainercontext.v1.CrudContactFunction
+        ;;
+    deploy-v1-personaltrainer-crud-addresses)
+        deploy_http_function v1-personaltrainer-crud-addresses com.fitmap.function.personaltrainercontext.v1.CrudAddressFunction
+        ;;
+    deploy-v1-student-crud-student)
+        deploy_http_function v1-student-crud-student com.fitmap.function.studentcontext.v1.CrudStudentFunction
+        ;;
+    deploy-v1-student-crud-contacts)
+        deploy_http_function v1-student-crud-contacts com.fitmap.function.studentcontext.v1.CrudContactFunction
+        ;;
+    deploy-v1-student-crud-addresses)
+        deploy_http_function v1-student-crud-addresses com.fitmap.function.studentcontext.v1.CrudAddressFunction
+        ;;
     *)
         echo -e "Invalid option"
         ;;

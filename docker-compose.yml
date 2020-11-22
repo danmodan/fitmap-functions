@@ -6,8 +6,8 @@ networks:
 
 services:
 
-  fitmap.function.set-roles:
-    container_name: fitmap.function.set-roles
+  fitmap.function.v1-set-roles:
+    container_name: fitmap.function.v1-set-roles
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
@@ -23,8 +23,8 @@ services:
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.setroles.v1.SetRolesFunction
 
-  fitmap.function.gym-context.crud-gym:
-    container_name: fitmap.function.gym-context.crud-gym
+  fitmap.function.v1-gym-crud-gym:
+    container_name: fitmap.function.v1-gym-crud-gym
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
@@ -40,8 +40,8 @@ services:
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudGymFunction
 
-  fitmap.function.gym-context.crud-gym-contacts:
-    container_name: fitmap.function.gym-context.crud-gym-contacts
+  fitmap.function.v1-gym-crud-contacts:
+    container_name: fitmap.function.v1-gym-crud-contacts
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
@@ -56,3 +56,122 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudContactFunction
+
+  fitmap.function.v1-gym-crud-addresses:
+    container_name: fitmap.function.v1-gym-crud-addresses
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9055:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudAddressFunction
+
+  fitmap.function.v1-personaltrainer-crud-personaltrainer:
+    container_name: fitmap.function.v1-personaltrainer-crud-personaltrainer
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9056:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.personaltrainercontext.v1.CrudPersonalTrainerFunction
+
+  fitmap.function.v1-personaltrainer-crud-contacts:
+    container_name: fitmap.function.v1-personaltrainer-crud-contacts
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9057:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.personaltrainercontext.v1.CrudContactFunction
+
+  fitmap.function.v1-personaltrainer-crud-addresses:
+    container_name: fitmap.function.v1-personaltrainer-crud-addresses
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9058:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.personaltrainercontext.v1.CrudAddressFunction
+
+  fitmap.function.v1-student-crud-student:
+    container_name: fitmap.function.v1-student-crud-student
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9059:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.studentcontext.v1.CrudStudentFunction
+
+  fitmap.function.v1-student-crud-contacts:
+    container_name: fitmap.function.v1-student-crud-contacts
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9060:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.studentcontext.v1.CrudContactFunction
+
+  fitmap.function.v1-student-crud-addresses:
+    container_name: fitmap.function.v1-student-crud-addresses
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9061:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.studentcontext.v1.CrudAddressFunction
