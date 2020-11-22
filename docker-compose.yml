@@ -74,8 +74,8 @@ services:
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudAddressFunction
 
-  fitmap.function.v1-personaltrainer-crud-personaltrainer:
-    container_name: fitmap.function.v1-personaltrainer-crud-personaltrainer
+  fitmap.function.v1-personal-trainer-crud-personal-trainer:
+    container_name: fitmap.function.v1-personal-trainer-crud-personal-trainer
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
@@ -91,8 +91,8 @@ services:
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.personaltrainercontext.v1.CrudPersonalTrainerFunction
 
-  fitmap.function.v1-personaltrainer-crud-contacts:
-    container_name: fitmap.function.v1-personaltrainer-crud-contacts
+  fitmap.function.v1-personal-trainer-crud-contacts:
+    container_name: fitmap.function.v1-personal-trainer-crud-contacts
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
@@ -108,8 +108,8 @@ services:
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.personaltrainercontext.v1.CrudContactFunction
 
-  fitmap.function.v1-personaltrainer-crud-addresses:
-    container_name: fitmap.function.v1-personaltrainer-crud-addresses
+  fitmap.function.v1-personal-trainer-crud-addresses:
+    container_name: fitmap.function.v1-personal-trainer-crud-addresses
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
