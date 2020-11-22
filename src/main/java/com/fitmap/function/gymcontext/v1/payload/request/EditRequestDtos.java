@@ -43,12 +43,6 @@ public class EditRequestDtos {
         @Size(max = 2000)
         private String biography;
 
-        @Valid
-        private List<@NotNull Contact> contacts;
-
-        @Valid
-        private List<@NotNull Address> addresses;
-
         private List<@NotBlank String> sports;
 
         private List<@NotBlank String> galleryPicturesUrls;

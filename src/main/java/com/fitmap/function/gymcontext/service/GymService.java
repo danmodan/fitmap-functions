@@ -1,9 +1,8 @@
 package com.fitmap.function.gymcontext.service;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -15,6 +14,7 @@ import com.fitmap.function.gymcontext.domain.Gym;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
@@ -101,46 +101,38 @@ public class GymService {
         throw new TerminalException(String.format("Gym, %s, not found.", gymId), HttpStatus.NOT_FOUND);
     }
 
-    private List<String> updateSports(String gymId, List<String> sportsIds, Function<Object[], FieldValue> fieldValueFunc) throws InterruptedException, ExecutionException {
+    public void updateProps(Gym gym) throws InterruptedException, ExecutionException {
 
-        var array = sportsIds.toArray(new String[sportsIds.size()]);
+        var docRef = db.collection(GYMS_COLLECTION).document(gym.getId());
 
-        var docRef = db.collection(GYMS_COLLECTION).document(gymId);
+        var propsToUpdate = new HashMap<String, Object>();
+        propsToUpdate.put("updatedAt", new Date());
 
-        docRef.update("sports", fieldValueFunc.apply((Object[])array)).get();
+        if(StringUtils.isNotEmpty(gym.getInstagram())) {
+            propsToUpdate.put("instagram", gym.getInstagram());
+        }
 
-        return sportsIds;
+        if(StringUtils.isNotEmpty(gym.getBiography())) {
+            propsToUpdate.put("biography", gym.getBiography());
+        }
+
+        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(gym.getGalleryPicturesUrls().toArray(new Object[gym.getGalleryPicturesUrls().size()])));
+        propsToUpdate.put("sports", FieldValue.arrayUnion(gym.getSports().toArray(new Object[gym.getSports().size()])));
+
+        docRef.update(propsToUpdate).get();
     }
 
-    public List<String> updateSports(String gymId, List<String> sportsIds) throws InterruptedException, ExecutionException {
+    public void removeElementsFromArraysProps(Gym gym) throws InterruptedException, ExecutionException {
 
-        return updateSports(gymId, sportsIds, FieldValue::arrayUnion);
-    }
+        var docRef = db.collection(GYMS_COLLECTION).document(gym.getId());
 
-    public List<String> removeSports(String gymId, List<String> sportsIds) throws InterruptedException, ExecutionException {
+        var propsToUpdate = new HashMap<String, Object>();
+        propsToUpdate.put("updatedAt", new Date());
 
-        return updateSports(gymId, sportsIds, FieldValue::arrayRemove);
-    }
+        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(gym.getGalleryPicturesUrls().toArray(new Object[gym.getGalleryPicturesUrls().size()])));
+        propsToUpdate.put("sports", FieldValue.arrayRemove(gym.getSports().toArray(new Object[gym.getSports().size()])));
 
-	private List<String> updateGalleryPicturesUrls(String gymId, List<String> galleryPicturesUrlsIds, Function<Object[], FieldValue> fieldValueFunc) throws InterruptedException, ExecutionException {
-
-        var array = galleryPicturesUrlsIds.toArray(new String[galleryPicturesUrlsIds.size()]);
-
-        var docRef = db.collection(GYMS_COLLECTION).document(gymId);
-
-        docRef.update("galleryPicturesUrls", fieldValueFunc.apply((Object[])array)).get();
-
-        return galleryPicturesUrlsIds;
-	}
-
-	public List<String> updateGalleryPicturesUrls(String gymId, List<String> galleryPicturesUrlsIds) throws InterruptedException, ExecutionException {
-
-        return updateGalleryPicturesUrls(gymId, galleryPicturesUrlsIds, FieldValue::arrayUnion);
-	}
-
-	public List<String> removeGalleryPicturesUrls(String gymId, List<String> galleryPicturesUrlsIds) throws InterruptedException, ExecutionException {
-
-        return updateGalleryPicturesUrls(gymId, galleryPicturesUrlsIds, FieldValue::arrayRemove);
+        docRef.update(propsToUpdate).get();
     }
 
 }

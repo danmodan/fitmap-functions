@@ -149,8 +149,6 @@ public class Gym {
         return Gym
             .builder()
             .id(gymId)
-            .contacts(Contact.from(dto.getContacts(), Contact::from))
-            .addresses(Address.from(dto.getAddresses(), Address::from))
             .biography(dto.getBiography())
             .instagram(dto.getInstagram())
             .sports(dto.getSports())

@@ -17,6 +17,7 @@ import com.fitmap.function.commonfirestore.config.FirestoreConfig;
 import com.fitmap.function.gymcontext.domain.Gym;
 import com.fitmap.function.gymcontext.service.GymService;
 import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.gymcontext.v1.payload.request.EditRequestDtos;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
@@ -61,8 +62,14 @@ public class CrudGymFunction implements HttpFunction {
                 case POST:
                     doPost(request, response);
                     break;
+                case PUT:
+                    doPut(request, response);
+                    break;
+                case DELETE:
+                    doDelete(request, response);
+                    break;
                 default:
-                    throw new MethodNotAllowedException(requestMethod, Arrays.asList(HttpMethod.GET, HttpMethod.POST));
+                    throw new MethodNotAllowedException(requestMethod, Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE));
             }
 
         } catch (TerminalException e) {ResponseService.answerTerminalException(request, response, e);}
@@ -94,6 +101,60 @@ public class CrudGymFunction implements HttpFunction {
 
         ResponseService.writeResponse(response, created);
         ResponseService.fillResponseWithStatus(response, HttpStatus.CREATED);
+    }
+
+    private void doPut(HttpRequest request, HttpResponse response) throws Exception {
+
+        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
+
+        var dto = ReadRequestService.getBody(request, EditRequestDtos.Gym.class);
+
+        CheckConstraintsRequestBodyService.checkConstraints(dto);
+
+        update(dto, ReadRequestService.getUserId(request));
+
+        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
+    }
+
+    private void doDelete(HttpRequest request, HttpResponse response) throws Exception {
+
+        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
+
+        var dto = ReadRequestService.getBody(request, EditRequestDtos.Gym.class);
+
+        CheckConstraintsRequestBodyService.checkConstraints(dto);
+
+        remove(dto, ReadRequestService.getUserId(request));
+
+        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
+    }
+
+    private void update(EditRequestDtos.Gym dto, String gymId) throws Exception {
+
+        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+
+        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+
+        dto.setSports(sports);
+        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+
+        var gym = Gym.from(dto, gymId);
+
+        gymService.updateProps(gym);
+    }
+
+    private void remove(EditRequestDtos.Gym dto, String gymId) throws Exception {
+
+        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+
+        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+
+        dto.setSports(sports);
+        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+
+        var gym = Gym.from(dto, gymId);
+
+        gymService.removeElementsFromArraysProps(gym);
     }
 
     private Gym create(final CreateRequestDtos.Gym dto, final String gymId) {
