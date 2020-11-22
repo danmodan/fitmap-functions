@@ -122,4 +122,25 @@ public class GymService {
         return updateSports(gymId, sportsIds, FieldValue::arrayRemove);
     }
 
+	private List<String> updateGalleryPicturesUrls(String gymId, List<String> galleryPicturesUrlsIds, Function<Object[], FieldValue> fieldValueFunc) throws InterruptedException, ExecutionException {
+
+        var array = galleryPicturesUrlsIds.toArray(new String[galleryPicturesUrlsIds.size()]);
+
+        var docRef = db.collection(GYMS_COLLECTION).document(gymId);
+
+        docRef.update("galleryPicturesUrls", fieldValueFunc.apply((Object[])array)).get();
+
+        return galleryPicturesUrlsIds;
+	}
+
+	public List<String> updateGalleryPicturesUrls(String gymId, List<String> galleryPicturesUrlsIds) throws InterruptedException, ExecutionException {
+
+        return updateGalleryPicturesUrls(gymId, galleryPicturesUrlsIds, FieldValue::arrayUnion);
+	}
+
+	public List<String> removeGalleryPicturesUrls(String gymId, List<String> galleryPicturesUrlsIds) throws InterruptedException, ExecutionException {
+
+        return updateGalleryPicturesUrls(gymId, galleryPicturesUrlsIds, FieldValue::arrayRemove);
+    }
+
 }

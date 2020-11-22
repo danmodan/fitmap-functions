@@ -29,7 +29,7 @@ import lombok.extern.java.Log;
 
 @Log
 @RequiredArgsConstructor
-public class CrudSportFunction implements HttpFunction {
+public class CrudGalleryPicturesUrlsFunction implements HttpFunction {
 
     static {
 
@@ -38,7 +38,7 @@ public class CrudSportFunction implements HttpFunction {
 
     private final GymService gymService;
 
-    public CrudSportFunction() {
+    public CrudGalleryPicturesUrlsFunction() {
         this.gymService = new GymService(FirestoreConfig.FIRESTORE);
 
         log.info("awake function");
@@ -108,19 +108,19 @@ public class CrudSportFunction implements HttpFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private void update(List<String> sportsIds, String gymId) throws Exception {
+    private void update(List<String> galleryPicturesUrlsIds, String gymId) throws Exception {
 
-        gymService.updateSports(gymId, sportsIds);
+        gymService.updateGalleryPicturesUrls(gymId, galleryPicturesUrlsIds);
     }
 
-    private void remove(List<String> sportsIds, String gymId) throws Exception {
+    private void remove(List<String> galleryPicturesUrlsIds, String gymId) throws Exception {
 
-        gymService.removeSports(gymId, sportsIds);
+        gymService.removeGalleryPicturesUrls(gymId, galleryPicturesUrlsIds);
     }
 
     private List<String> find(final String gymId) throws Exception {
 
-        return gymService.find(gymId).getSports();
+        return gymService.find(gymId).getGalleryPicturesUrls();
     }
 
 }
