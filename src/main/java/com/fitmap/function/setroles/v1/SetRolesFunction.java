@@ -4,7 +4,6 @@ import java.util.logging.Level;
 
 import javax.validation.ConstraintViolationException;
 
-import com.fitmap.function.common.config.FirebaseAuthConfig;
 import com.fitmap.function.common.config.SystemTimeZoneConfig;
 import com.fitmap.function.common.exception.TerminalException;
 import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
@@ -12,6 +11,7 @@ import com.fitmap.function.common.service.CheckRequestContentTypeService;
 import com.fitmap.function.common.service.CheckRequestMethodService;
 import com.fitmap.function.common.service.ReadRequestService;
 import com.fitmap.function.common.service.ResponseService;
+import com.fitmap.function.commonfirebase.config.FirebaseAuthConfig;
 import com.fitmap.function.setroles.service.SetRolesService;
 import com.fitmap.function.setroles.v1.payload.request.SetRolesRequestDto;
 import com.google.cloud.functions.HttpFunction;
@@ -39,6 +39,8 @@ public class SetRolesFunction implements HttpFunction {
     public SetRolesFunction() {
 
         this.setRolesService = new SetRolesService(FirebaseAuthConfig.FIREBASE_AUTH);
+
+        log.info("awake function");
     }
 
     @Override

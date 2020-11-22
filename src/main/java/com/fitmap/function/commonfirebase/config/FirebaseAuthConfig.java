@@ -1,4 +1,4 @@
-package com.fitmap.function.common.config;
+package com.fitmap.function.commonfirebase.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;

@@ -1,4 +1,4 @@
-package com.fitmap.function.common.config;
+package com.fitmap.function.commonfirestore.config;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;

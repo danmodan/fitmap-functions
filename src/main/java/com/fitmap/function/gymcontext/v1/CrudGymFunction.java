@@ -7,13 +7,13 @@ import java.util.logging.Level;
 
 import javax.validation.ConstraintViolationException;
 
-import com.fitmap.function.common.config.FirestoreConfig;
 import com.fitmap.function.common.config.SystemTimeZoneConfig;
 import com.fitmap.function.common.exception.TerminalException;
 import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.common.service.CheckRequestContentTypeService;
 import com.fitmap.function.common.service.ReadRequestService;
 import com.fitmap.function.common.service.ResponseService;
+import com.fitmap.function.commonfirestore.config.FirestoreConfig;
 import com.fitmap.function.gymcontext.domain.Gym;
 import com.fitmap.function.gymcontext.service.GymService;
 import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
@@ -42,8 +42,9 @@ public class CrudGymFunction implements HttpFunction {
     private final GymService gymService;
 
     public CrudGymFunction() {
-
         this.gymService = new GymService(FirestoreConfig.FIRESTORE);
+
+        log.info("awake function");
     }
 
     @Override

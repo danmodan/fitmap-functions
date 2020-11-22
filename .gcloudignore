@@ -8,15 +8,15 @@ docker-compose.yml
 service.sh
 
 src/test/
-src/main/java/com/fitmap/function/common/config/FirebaseAuthConfig.java
-src/main/java/com/fitmap/function/common/config/FirestoreConfig.java
+src/main/java/com/fitmap/function/commonfirestore/
+src/main/java/com/fitmap/function/commonfirebase/
+src/main/java/com/fitmap/function/setroles/
+src/main/java/com/fitmap/function/gymcontext/
 
 ### set-roles ###
-src/main/java/com/fitmap/function/setroles/
-#!src/main/java/com/fitmap/function/common/config/FirebaseAuthConfig.java
 #!src/main/java/com/fitmap/function/setroles/
+#!src/main/java/com/fitmap/function/commonfirebase/
 
 ### gym-context ###
-src/main/java/com/fitmap/function/gymcontext/
-#!src/main/java/com/fitmap/function/common/config/FirestoreConfig.java
 #!src/main/java/com/fitmap/function/gymcontext/
+#!src/main/java/com/fitmap/function/commonfirestore/
