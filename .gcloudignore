@@ -12,6 +12,8 @@ src/main/java/com/fitmap/function/commonfirestore/
 src/main/java/com/fitmap/function/commonfirebase/
 src/main/java/com/fitmap/function/setroles/
 src/main/java/com/fitmap/function/gymcontext/
+src/main/java/com/fitmap/function/personaltrainercontext/
+src/main/java/com/fitmap/function/studentcontext/
 
 ### set-roles ###
 #!src/main/java/com/fitmap/function/setroles/
@@ -19,4 +21,12 @@ src/main/java/com/fitmap/function/gymcontext/
 
 ### gym-context ###
 #!src/main/java/com/fitmap/function/gymcontext/
+#!src/main/java/com/fitmap/function/commonfirestore/
+
+### personal-trainer-context ###
+#!src/main/java/com/fitmap/function/personaltrainercontext/
+#!src/main/java/com/fitmap/function/commonfirestore/
+
+### student-context ###
+#!src/main/java/com/fitmap/function/studentcontext/
 #!src/main/java/com/fitmap/function/commonfirestore/
