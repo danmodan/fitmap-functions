@@ -1,7 +1,9 @@
 package com.fitmap.function.gymcontext.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -10,6 +12,7 @@ import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.gymcontext.domain.Address;
 import com.fitmap.function.gymcontext.domain.Contact;
 import com.fitmap.function.gymcontext.domain.Gym;
+import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -96,6 +99,27 @@ public class GymService {
         }
 
         throw new TerminalException(String.format("Gym, %s, not found.", gymId), HttpStatus.NOT_FOUND);
+    }
+
+    private List<String> updateSports(String gymId, List<String> sportsIds, Function<Object[], FieldValue> fieldValueFunc) throws InterruptedException, ExecutionException {
+
+        var array = sportsIds.toArray(new String[sportsIds.size()]);
+
+        var docRef = db.collection(GYMS_COLLECTION).document(gymId);
+
+        docRef.update("sports", fieldValueFunc.apply((Object[])array)).get();
+
+        return sportsIds;
+    }
+
+    public List<String> updateSports(String gymId, List<String> sportsIds) throws InterruptedException, ExecutionException {
+
+        return updateSports(gymId, sportsIds, FieldValue::arrayUnion);
+    }
+
+    public List<String> removeSports(String gymId, List<String> sportsIds) throws InterruptedException, ExecutionException {
+
+        return updateSports(gymId, sportsIds, FieldValue::arrayRemove);
     }
 
 }
