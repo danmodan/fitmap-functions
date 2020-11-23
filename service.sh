@@ -56,6 +56,9 @@ case $1 in
     deploy-v1-student-crud-addresses)
         deploy_http_function v1-student-crud-addresses com.fitmap.function.studentcontext.v1.CrudAddressFunction
         ;;
+    deploy-v1-sport-crud)
+        deploy_http_function v1-sport-crud com.fitmap.function.sportcontext.v1.CrudSportFunction
+        ;;
     *)
         echo -e "Invalid option"
         ;;
