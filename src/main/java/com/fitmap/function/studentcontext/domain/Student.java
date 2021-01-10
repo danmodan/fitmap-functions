@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fitmap.function.studentcontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.studentcontext.v1.payload.request.EditRequestDtos;
 import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.Exclude;
 
@@ -48,6 +49,9 @@ public class Student {
     @PastOrPresent
     private Date updatedAt;
 
+    @Builder.Default
+    private List<@NotBlank String> galleryPicturesUrls = new ArrayList<>();
+
     @Getter(onMethod = @__({ @Exclude }))
     @Builder.Default
     private List<@NotNull Contact> contacts = new ArrayList<>();
@@ -55,6 +59,15 @@ public class Student {
     @Getter(onMethod = @__({ @Exclude }))
     @Builder.Default
     private List<@NotNull Address> addresses = new ArrayList<>();
+
+    public void addGalleryPicturesUrls(List<String> galleryPicturesUrls) {
+
+        var newGalleryPicturesUrls = Objects.requireNonNullElse(galleryPicturesUrls, new ArrayList<String>());
+
+        this.galleryPicturesUrls = Objects.requireNonNullElse(this.galleryPicturesUrls, new ArrayList<String>());
+
+        this.galleryPicturesUrls.addAll(newGalleryPicturesUrls);
+    }
 
     public void addContacts(List<Contact> contacts) {
 
@@ -98,13 +111,23 @@ public class Student {
         return true;
     }
 
-    public static Student from(CreateRequestDtos.Student dto, String id) {
+    public static Student from(CreateRequestDtos.Student dto, String studentId) {
 
         return Student
             .builder()
-            .id(id)
+            .id(studentId)
             .contacts(Contact.from(dto.getContacts(), Contact::from))
             .addresses(Address.from(dto.getAddresses(), Address::from))
+            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .build();
+    }
+
+    public static Student from(EditRequestDtos.Student dto, String studentId) {
+
+        return Student
+            .builder()
+            .id(studentId)
+            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
             .build();
     }
 

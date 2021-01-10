@@ -1,5 +1,7 @@
 package com.fitmap.function.studentcontext.v1.payload.request;
 
+import java.util.List;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -21,6 +23,21 @@ import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EditRequestDtos {
+
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonNaming(value = SnakeCaseStrategy.class)
+    @JsonInclude(value = Include.NON_ABSENT)
+    public static class Student {
+
+        private List<@NotBlank String> galleryPicturesUrls;
+
+    }
 
     @Getter
     @Setter

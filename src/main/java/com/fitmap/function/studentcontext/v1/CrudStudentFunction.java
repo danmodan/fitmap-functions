@@ -17,6 +17,7 @@ import com.fitmap.function.commonfirestore.config.FirestoreConfig;
 import com.fitmap.function.studentcontext.domain.Student;
 import com.fitmap.function.studentcontext.service.StudentService;
 import com.fitmap.function.studentcontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.studentcontext.v1.payload.request.EditRequestDtos;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
@@ -61,8 +62,14 @@ public class CrudStudentFunction implements HttpFunction {
                 case POST:
                     doPost(request, response);
                     break;
+                case PUT:
+                    doPut(request, response);
+                    break;
+                case DELETE:
+                    doDelete(request, response);
+                    break;
                 default:
-                    throw new MethodNotAllowedException(requestMethod, Arrays.asList(HttpMethod.GET, HttpMethod.POST));
+                throw new MethodNotAllowedException(requestMethod, Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE));
             }
 
         } catch (TerminalException e) {ResponseService.answerTerminalException(request, response, e);}
@@ -94,6 +101,54 @@ public class CrudStudentFunction implements HttpFunction {
 
         ResponseService.writeResponse(response, created);
         ResponseService.fillResponseWithStatus(response, HttpStatus.CREATED);
+    }
+
+    private void doPut(HttpRequest request, HttpResponse response) throws Exception {
+
+        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
+
+        var dto = ReadRequestService.getBody(request, EditRequestDtos.Student.class);
+
+        CheckConstraintsRequestBodyService.checkConstraints(dto);
+
+        update(dto, ReadRequestService.getUserId(request));
+
+        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
+    }
+
+    private void doDelete(HttpRequest request, HttpResponse response) throws Exception {
+
+        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
+
+        var dto = ReadRequestService.getBody(request, EditRequestDtos.Student.class);
+
+        CheckConstraintsRequestBodyService.checkConstraints(dto);
+
+        remove(dto, ReadRequestService.getUserId(request));
+
+        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
+    }
+
+    private void update(EditRequestDtos.Student dto, String gymId) throws Exception {
+
+        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+
+        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+
+        var student = Student.from(dto, gymId);
+
+        studentService.updateProps(student);
+    }
+
+    private void remove(EditRequestDtos.Student dto, String gymId) throws Exception {
+
+        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+
+        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+
+        var student = Student.from(dto, gymId);
+
+        studentService.removeElementsFromArraysProps(student);
     }
 
     private Student create(final CreateRequestDtos.Student dto, final String studentId) {

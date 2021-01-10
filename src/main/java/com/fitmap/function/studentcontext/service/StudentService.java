@@ -1,6 +1,7 @@
 package com.fitmap.function.studentcontext.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.studentcontext.domain.Address;
 import com.fitmap.function.studentcontext.domain.Contact;
 import com.fitmap.function.studentcontext.domain.Student;
+import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -96,6 +98,30 @@ public class StudentService {
         }
 
         throw new TerminalException(String.format("Student, %s, not found.", studentId), HttpStatus.NOT_FOUND);
+    }
+
+    public void updateProps(Student student) throws InterruptedException, ExecutionException {
+
+        var docRef = db.collection(STUDENTS_COLLECTION).document(student.getId());
+
+        var propsToUpdate = new HashMap<String, Object>();
+        propsToUpdate.put("updatedAt", new Date());
+
+        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
+
+        docRef.update(propsToUpdate).get();
+    }
+
+    public void removeElementsFromArraysProps(Student student) throws InterruptedException, ExecutionException {
+
+        var docRef = db.collection(STUDENTS_COLLECTION).document(student.getId());
+
+        var propsToUpdate = new HashMap<String, Object>();
+        propsToUpdate.put("updatedAt", new Date());
+
+        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
+
+        docRef.update(propsToUpdate).get();
     }
 
 }
