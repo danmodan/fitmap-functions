@@ -1,7 +1,9 @@
 package com.fitmap.function.studentcontext.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.studentcontext.domain.Address;
 import com.fitmap.function.studentcontext.domain.Contact;
 import com.fitmap.function.studentcontext.domain.Student;
+import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
@@ -72,32 +75,36 @@ public class StudentService {
         }
     }
 
-    public Student find(String studentId) throws InterruptedException, ExecutionException {
+    public List<Student> find(List<String> studentIds) throws InterruptedException, ExecutionException {
 
-        var docRef = db.collection(STUDENTS_COLLECTION).document(studentId);
+        var students = new ArrayList<Student>();
 
-        var studentDoc = docRef.get().get();
+        db
+            .collection(STUDENTS_COLLECTION)
+            .whereIn(FieldPath.documentId(), studentIds)
+            .get()
+            .get()
+            .forEach(queryDocSnapshot -> {
 
-        if (studentDoc.exists()) {
+                try {
 
-            var student = studentDoc.toObject(Student.class);
+                    var docRef = queryDocSnapshot.getReference();
+                    var contactsColl = docRef.collection(CONTACTS_COLLECTION).get();
+                    var addressColl = docRef.collection(ADDRESS_COLLECTION).get();
 
-            var contactsColl = docRef.collection(CONTACTS_COLLECTION).get().get();
+                    var student = queryDocSnapshot.toObject(Student.class);
+                    var contacts = contactsColl.get().toObjects(Contact.class);
+                    var addresses = addressColl.get().toObjects(Address.class);
 
-            var contacts = contactsColl.getDocuments().stream().map(doc -> doc.toObject(Contact.class)).collect(Collectors.toList());
+                    student.addContacts(contacts);
+                    student.addAddresses(addresses);
+                    students.add(student);
 
-            student.addContacts(contacts);
+                } catch (Exception e) { }
+            });
 
-            var addressColl = docRef.collection(ADDRESS_COLLECTION).get().get();
+        return students;
 
-            var address = addressColl.getDocuments().stream().map(doc -> doc.toObject(Address.class)).collect(Collectors.toList());
-
-            student.addAddresses(address);
-
-            return student;
-        }
-
-        throw new TerminalException(String.format("Student, %s, not found.", studentId), HttpStatus.NOT_FOUND);
     }
 
     public void updateProps(Student student) throws InterruptedException, ExecutionException {

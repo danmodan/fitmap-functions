@@ -2,6 +2,8 @@ package com.fitmap.function.studentcontext.v1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -83,7 +85,9 @@ public class CrudStudentFunction implements HttpFunction {
 
     private void doGet(HttpRequest request, HttpResponse response) throws Exception {
 
-        var found = find(ReadRequestService.getUserId(request));
+        var ids = Objects.requireNonNullElse(request.getQueryParameters().get("ids"), new ArrayList<String>());
+
+        var found = find(ids);
 
         ResponseService.writeResponse(response, found);
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
@@ -165,9 +169,14 @@ public class CrudStudentFunction implements HttpFunction {
         return studentService.create(student);
     }
 
-    private Student find(final String studentId) throws Exception {
+    private List<Student> find(final List<String> ids) throws Exception {
 
-        return studentService.find(studentId);
+        if(ids.isEmpty()) {
+
+            return Collections.emptyList();
+        }
+
+        return studentService.find(ids);
     }
 
 }
