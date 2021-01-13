@@ -2,6 +2,8 @@ package com.fitmap.function.gymcontext.v1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -83,7 +85,9 @@ public class CrudGymFunction implements HttpFunction {
 
     private void doGet(HttpRequest request, HttpResponse response) throws Exception {
 
-        var found = find(ReadRequestService.getUserId(request));
+        var ids = Objects.requireNonNullElse(request.getQueryParameters().get("ids"), new ArrayList<String>());
+
+        var found = find(ids);
 
         ResponseService.writeResponse(response, found);
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
@@ -177,9 +181,14 @@ public class CrudGymFunction implements HttpFunction {
         return gymService.create(gym);
     }
 
-    private Gym find(final String gymId) throws Exception {
+    private List<Gym> find(final List<String> ids) throws Exception {
 
-        return gymService.find(gymId);
+        if(ids.isEmpty()) {
+
+            return Collections.emptyList();
+        }
+
+        return gymService.find(ids);
     }
 
 }

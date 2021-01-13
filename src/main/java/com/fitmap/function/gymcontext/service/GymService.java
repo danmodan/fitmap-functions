@@ -1,7 +1,9 @@
 package com.fitmap.function.gymcontext.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.gymcontext.domain.Address;
 import com.fitmap.function.gymcontext.domain.Contact;
 import com.fitmap.function.gymcontext.domain.Gym;
+import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
@@ -73,32 +76,36 @@ public class GymService {
         }
     }
 
-    public Gym find(String gymId) throws InterruptedException, ExecutionException {
+    public List<Gym> find(List<String> gymIds) throws InterruptedException, ExecutionException {
 
-        var docRef = db.collection(GYMS_COLLECTION).document(gymId);
+        var gyms = new ArrayList<Gym>();
 
-        var gymDoc = docRef.get().get();
+        db
+            .collection(GYMS_COLLECTION)
+            .whereIn(FieldPath.documentId(), gymIds)
+            .get()
+            .get()
+            .forEach(queryDocSnapshot -> {
 
-        if (gymDoc.exists()) {
+                try {
 
-            var gym = gymDoc.toObject(Gym.class);
+                    var docRef = queryDocSnapshot.getReference();
+                    var contactsColl = docRef.collection(CONTACTS_COLLECTION).get();
+                    var addressColl = docRef.collection(ADDRESS_COLLECTION).get();
 
-            var contactsColl = docRef.collection(CONTACTS_COLLECTION).get().get();
+                    var gym = queryDocSnapshot.toObject(Gym.class);
+                    var contacts = contactsColl.get().toObjects(Contact.class);
+                    var addresses = addressColl.get().toObjects(Address.class);
 
-            var contacts = contactsColl.getDocuments().stream().map(doc -> doc.toObject(Contact.class)).collect(Collectors.toList());
+                    gym.addContacts(contacts);
+                    gym.addAddresses(addresses);
+                    gyms.add(gym);
 
-            gym.addContacts(contacts);
+                } catch (Exception e) { }
+            });
 
-            var addressColl = docRef.collection(ADDRESS_COLLECTION).get().get();
+        return gyms;
 
-            var address = addressColl.getDocuments().stream().map(doc -> doc.toObject(Address.class)).collect(Collectors.toList());
-
-            gym.addAddresses(address);
-
-            return gym;
-        }
-
-        throw new TerminalException(String.format("Gym, %s, not found.", gymId), HttpStatus.NOT_FOUND);
     }
 
     public void updateProps(Gym gym) throws InterruptedException, ExecutionException {
