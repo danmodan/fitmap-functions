@@ -35,9 +35,6 @@ public class EditRequestDtos {
     @JsonInclude(value = Include.NON_ABSENT)
     public static class PersonalTrainer {
 
-        @Size(max = 400)
-        private String instagram;
-
         @Size(max = 2000)
         private String biography;
 
@@ -73,6 +70,9 @@ public class EditRequestDtos {
 
         @JsonProperty(value = "is_whatsapp")
         private Boolean whatsapp;
+
+        @Size(max = 400)
+        private String instagram;
     }
 
     @Getter

@@ -56,6 +56,9 @@ public class Contact {
     @JsonProperty(value = "is_whatsapp")
     private Boolean whatsapp;
 
+    @Size(max = 400)
+    private String instagram;
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -88,6 +91,7 @@ public class Contact {
             .email(dto.getEmail())
             .phone(dto.getPhone())
             .whatsapp(dto.getWhatsapp())
+            .instagram(dto.getInstagram())
             .build();
     }
 
@@ -100,6 +104,7 @@ public class Contact {
             .email(dto.getEmail())
             .phone(dto.getPhone())
             .whatsapp(dto.getWhatsapp())
+            .instagram(dto.getInstagram())
             .build();
     }
 

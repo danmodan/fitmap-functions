@@ -115,10 +115,6 @@ public class PersonalTrainerService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
-        if(StringUtils.isNotEmpty(personalTrainer.getInstagram())) {
-            propsToUpdate.put("instagram", personalTrainer.getInstagram());
-        }
-
         if(StringUtils.isNotEmpty(personalTrainer.getBiography())) {
             propsToUpdate.put("biography", personalTrainer.getBiography());
         }

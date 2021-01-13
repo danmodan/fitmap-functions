@@ -50,9 +50,6 @@ public class PersonalTrainer {
     @PastOrPresent
     private Date updatedAt;
 
-    @Size(max = 400)
-    private String instagram;
-
     @Size(max = 2000)
     private String biography;
 
@@ -138,7 +135,6 @@ public class PersonalTrainer {
             .contacts(Contact.from(dto.getContacts(), Contact::from))
             .addresses(Address.from(dto.getAddresses(), Address::from))
             .biography(dto.getBiography())
-            .instagram(dto.getInstagram())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
             .build();
@@ -150,7 +146,6 @@ public class PersonalTrainer {
             .builder()
             .id(id)
             .biography(dto.getBiography())
-            .instagram(dto.getInstagram())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
             .build();
