@@ -115,10 +115,6 @@ public class GymService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
-        if(StringUtils.isNotEmpty(gym.getInstagram())) {
-            propsToUpdate.put("instagram", gym.getInstagram());
-        }
-
         if(StringUtils.isNotEmpty(gym.getBiography())) {
             propsToUpdate.put("biography", gym.getBiography());
         }
