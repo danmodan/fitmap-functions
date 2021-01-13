@@ -1,7 +1,9 @@
 package com.fitmap.function.personaltrainercontext.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.personaltrainercontext.domain.Address;
 import com.fitmap.function.personaltrainercontext.domain.Contact;
 import com.fitmap.function.personaltrainercontext.domain.PersonalTrainer;
+import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
@@ -73,32 +76,36 @@ public class PersonalTrainerService {
         }
     }
 
-    public PersonalTrainer find(String personalTrainerId) throws InterruptedException, ExecutionException {
+    public List<PersonalTrainer> find(List<String> personalTrainerIds) throws InterruptedException, ExecutionException {
 
-        var docRef = db.collection(PERSONAL_TRAINERS_COLLECTION).document(personalTrainerId);
+        var personalTrainers = new ArrayList<PersonalTrainer>();
 
-        var personalTrainerDoc = docRef.get().get();
+        db
+            .collection(PERSONAL_TRAINERS_COLLECTION)
+            .whereIn(FieldPath.documentId(), personalTrainerIds)
+            .get()
+            .get()
+            .forEach(queryDocSnapshot -> {
 
-        if (personalTrainerDoc.exists()) {
+                try {
 
-            var personalTrainer = personalTrainerDoc.toObject(PersonalTrainer.class);
+                    var docRef = queryDocSnapshot.getReference();
+                    var contactsColl = docRef.collection(CONTACTS_COLLECTION).get();
+                    var addressColl = docRef.collection(ADDRESS_COLLECTION).get();
 
-            var contactsColl = docRef.collection(CONTACTS_COLLECTION).get().get();
+                    var personalTrainer = queryDocSnapshot.toObject(PersonalTrainer.class);
+                    var contacts = contactsColl.get().toObjects(Contact.class);
+                    var addresses = addressColl.get().toObjects(Address.class);
 
-            var contacts = contactsColl.getDocuments().stream().map(doc -> doc.toObject(Contact.class)).collect(Collectors.toList());
+                    personalTrainer.addContacts(contacts);
+                    personalTrainer.addAddresses(addresses);
+                    personalTrainers.add(personalTrainer);
 
-            personalTrainer.addContacts(contacts);
+                } catch (Exception e) { }
+            });
 
-            var addressColl = docRef.collection(ADDRESS_COLLECTION).get().get();
+        return personalTrainers;
 
-            var address = addressColl.getDocuments().stream().map(doc -> doc.toObject(Address.class)).collect(Collectors.toList());
-
-            personalTrainer.addAddresses(address);
-
-            return personalTrainer;
-        }
-
-        throw new TerminalException(String.format("PersonalTrainer, %s, not found.", personalTrainerId), HttpStatus.NOT_FOUND);
     }
 
     public void updateProps(PersonalTrainer personalTrainer) throws InterruptedException, ExecutionException {
