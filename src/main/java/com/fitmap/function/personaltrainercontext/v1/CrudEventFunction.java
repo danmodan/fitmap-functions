@@ -6,10 +6,10 @@ import java.util.function.Function;
 import com.fitmap.function.common.config.SystemTimeZoneConfig;
 import com.fitmap.function.commonfirestore.config.FirestoreConfig;
 import com.fitmap.function.commonfirestore.function.SubCollectionsCrudFunction;
-import com.fitmap.function.gymcontext.domain.Event;
-import com.fitmap.function.gymcontext.service.EventService;
-import com.fitmap.function.gymcontext.v1.payload.request.CreateRequestDtos;
-import com.fitmap.function.gymcontext.v1.payload.request.EditRequestDtos;
+import com.fitmap.function.personaltrainercontext.domain.Event;
+import com.fitmap.function.personaltrainercontext.service.EventService;
+import com.fitmap.function.personaltrainercontext.v1.payload.request.CreateRequestDtos;
+import com.fitmap.function.personaltrainercontext.v1.payload.request.EditRequestDtos;
 
 import lombok.extern.java.Log;
 

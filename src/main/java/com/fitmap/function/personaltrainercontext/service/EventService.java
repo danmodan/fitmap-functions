@@ -6,7 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import com.fitmap.function.commonfirestore.service.SubCollectionsCrudService;
-import com.fitmap.function.gymcontext.domain.Event;
+import com.fitmap.function.personaltrainercontext.domain.Event;
 import com.google.cloud.firestore.Firestore;
 
 public class EventService extends SubCollectionsCrudService<Event> {

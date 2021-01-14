@@ -163,4 +163,32 @@ public class EditRequestDtos {
 
     }
 
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonNaming(value = SnakeCaseStrategy.class)
+    @JsonInclude(value = Include.NON_ABSENT)
+    public static class SubscriptionPlan {
+
+        @NotBlank
+        private String id;
+    
+        @Size(max = 180)
+        private String name;
+    
+        @PositiveOrZero
+        private BigDecimal price;
+    
+        @PositiveOrZero
+        private int numberMonth;
+    
+        @Size(max = 2000)
+        private String description;
+    
+    }
+
 }

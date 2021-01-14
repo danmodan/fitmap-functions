@@ -49,6 +49,12 @@ public class CreateRequestDtos {
         @Valid
         private List<@NotNull Address> addresses;
 
+        @Valid
+        private List<@NotNull Event> events;
+
+        @Valid
+        private List<@NotNull SubscriptionPlan> subscriptionPlans;
+
         private List<@NotBlank String> sports;
 
         private List<@NotBlank String> galleryPicturesUrls;
@@ -156,6 +162,31 @@ public class CreateRequestDtos {
 
         private Boolean showEmailContact;
 
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonNaming(value = SnakeCaseStrategy.class)
+    @JsonInclude(value = Include.NON_ABSENT)
+    public static class SubscriptionPlan {
+
+        @Size(max = 180)
+        private String name;
+    
+        @PositiveOrZero
+        private BigDecimal price;
+    
+        @PositiveOrZero
+        private int numberMonth;
+    
+        @Size(max = 2000)
+        private String description;
+    
     }
 
 }

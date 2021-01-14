@@ -14,6 +14,7 @@ import com.fitmap.function.personaltrainercontext.domain.Address;
 import com.fitmap.function.personaltrainercontext.domain.Contact;
 import com.fitmap.function.personaltrainercontext.domain.Event;
 import com.fitmap.function.personaltrainercontext.domain.PersonalTrainer;
+import com.fitmap.function.personaltrainercontext.domain.SubscriptionPlan;
 import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
@@ -33,6 +34,7 @@ public class PersonalTrainerService {
     private static final String CONTACTS_COLLECTION = "contacts";
     private static final String ADDRESS_COLLECTION = "addresses";
     private static final String EVENTS_COLLECTION = "events";
+    private static final String SUBSCRIPTION_PLAN_COLLECTION = "subscription-plans";
 
     private final Firestore db;
 
@@ -64,12 +66,19 @@ public class PersonalTrainerService {
             return Pair.of(events, ref);
         }).collect(Collectors.toSet());
 
+        var subscriptionPlansPerDocRef = personalTrainer.getSubscriptionPlans().stream().map(subscriptionPlan -> {
+            var ref = personalTrainerDocRef.collection(SUBSCRIPTION_PLAN_COLLECTION).document();
+            subscriptionPlan.setId(ref.getId());
+            return Pair.of(subscriptionPlan, ref);
+        }).collect(Collectors.toSet());
+
         CheckConstraintsRequestBodyService.checkConstraints(personalTrainer);
 
         batch.create(personalTrainerDocRef, personalTrainer);
         addressPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
         contactsPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
         eventsPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
+        subscriptionPlansPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
 
         try {
 
@@ -102,15 +111,18 @@ public class PersonalTrainerService {
                     var contactsColl = docRef.collection(CONTACTS_COLLECTION).get();
                     var addressColl = docRef.collection(ADDRESS_COLLECTION).get();
                     var eventsColl = docRef.collection(EVENTS_COLLECTION).get();
+                    var subscriptionPlansColl = docRef.collection(SUBSCRIPTION_PLAN_COLLECTION).get();
 
                     var personalTrainer = queryDocSnapshot.toObject(PersonalTrainer.class);
                     var contacts = contactsColl.get().toObjects(Contact.class);
                     var addresses = addressColl.get().toObjects(Address.class);
                     var events = eventsColl.get().toObjects(Event.class);
-
+                    var subscriptionPlans = subscriptionPlansColl.get().toObjects(SubscriptionPlan.class);
+                    
                     personalTrainer.addContacts(contacts);
                     personalTrainer.addAddresses(addresses);
                     personalTrainer.addEvents(events);
+                    personalTrainer.addSubscriptionPlan(subscriptionPlans);
                     personalTrainers.add(personalTrainer);
 
                 } catch (Exception e) { }

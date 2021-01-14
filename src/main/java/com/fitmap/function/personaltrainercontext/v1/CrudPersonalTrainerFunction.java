@@ -167,12 +167,18 @@ public class CrudPersonalTrainerFunction implements HttpFunction {
 
         var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<CreateRequestDtos.Contact>());
 
+        var events = Objects.requireNonNullElse(dto.getEvents(), new ArrayList<CreateRequestDtos.Event>());
+
+        var subscriptionPlans = Objects.requireNonNullElse(dto.getSubscriptionPlans(), new ArrayList<CreateRequestDtos.SubscriptionPlan>());
+
         var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
 
         var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
 
         dto.setAddresses(addresses);
         dto.setContacts(contacts);
+        dto.setEvents(events);
+        dto.setSubscriptionPlans(subscriptionPlans);
         dto.setSports(sports);
         dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
