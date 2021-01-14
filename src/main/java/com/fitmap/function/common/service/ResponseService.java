@@ -1,7 +1,7 @@
 package com.fitmap.function.common.service;
 
 import java.io.PrintWriter;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -144,7 +144,7 @@ public class ResponseService {
 
         return ErrorResponse
             .builder()
-            .timestamp(ZonedDateTime.now())
+            .timestamp(new Date())
             .status(status.value())
             .statusError(status.getReasonPhrase())
             .path(request.getPath())
