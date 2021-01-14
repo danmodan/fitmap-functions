@@ -38,6 +38,9 @@ case $1 in
     deploy-v1-gym-crud-events)
         deploy_http_function v1-gym-crud-events com.fitmap.function.gymcontext.v1.CrudEventFunction
         ;;
+    deploy-v1-gym-crud-subscription-plans)
+        deploy_http_function v1-gym-crud-subscription-plans com.fitmap.function.gymcontext.v1.CrudSubscriptionPlanFunction
+        ;;
     deploy-v1-gym-crud-addresses)
         deploy_http_function v1-gym-crud-addresses com.fitmap.function.gymcontext.v1.CrudAddressFunction
         ;;
@@ -49,6 +52,9 @@ case $1 in
         ;;
     deploy-v1-personal-trainer-crud-events)
         deploy_http_function v1-personal-trainer-crud-events com.fitmap.function.personaltrainercontext.v1.CrudEventFunction
+        ;;
+    deploy-v1-personal-trainer-crud-subscription-plans)
+        deploy_http_function v1-personal-trainer-crud-subscription-plans com.fitmap.function.personaltrainercontext.v1.CrudSubscriptionPlanFunction
         ;;
     deploy-v1-personal-trainer-crud-addresses)
         deploy_http_function v1-personal-trainer-crud-addresses com.fitmap.function.personaltrainercontext.v1.CrudAddressFunction
