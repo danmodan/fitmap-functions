@@ -133,24 +133,24 @@ public class CrudStudentFunction implements HttpFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private void update(EditRequestDtos.Student dto, String gymId) throws Exception {
+    private void update(EditRequestDtos.Student dto, String studentId) throws Exception {
 
         var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
 
         dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
-        var student = Student.from(dto, gymId);
+        var student = Student.from(dto, studentId);
 
         studentService.updateProps(student);
     }
 
-    private void remove(EditRequestDtos.Student dto, String gymId) throws Exception {
+    private void remove(EditRequestDtos.Student dto, String studentId) throws Exception {
 
         var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
 
         dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
-        var student = Student.from(dto, gymId);
+        var student = Student.from(dto, studentId);
 
         studentService.removeElementsFromArraysProps(student);
     }
