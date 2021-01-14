@@ -70,6 +70,10 @@ public class CreateRequestDtos {
 
         @JsonProperty(value = "is_whatsapp")
         private Boolean whatsapp;
+
+        @Size(max = 400)
+        private String instagram;
+
     }
 
     @Getter
