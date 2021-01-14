@@ -46,7 +46,6 @@ public class SubscriptionPlanService extends SubCollectionsCrudService<Subscript
         return subscriptionPlan -> {
             var props = new HashMap<String, Object>();
 
-            props.put("id", subscriptionPlan.getId());
             props.put("name", subscriptionPlan.getName());
             props.put("price", subscriptionPlan.getPrice());
             props.put("numberMonth", subscriptionPlan.getNumberMonth());
