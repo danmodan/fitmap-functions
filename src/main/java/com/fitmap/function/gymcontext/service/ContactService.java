@@ -45,7 +45,8 @@ public class ContactService extends SubCollectionsCrudService<Contact> {
             "name", contact.getName(),
             "email", contact.getEmail(),
             "phone", contact.getPhone(),
-            "whatsapp", contact.getWhatsapp()
+            "whatsapp", contact.getWhatsapp(),
+            "instagram", contact.getInstagram()
         );
     }
 
