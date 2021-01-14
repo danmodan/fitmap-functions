@@ -12,6 +12,7 @@ import com.fitmap.function.common.exception.TerminalException;
 import com.fitmap.function.common.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.personaltrainercontext.domain.Address;
 import com.fitmap.function.personaltrainercontext.domain.Contact;
+import com.fitmap.function.personaltrainercontext.domain.Event;
 import com.fitmap.function.personaltrainercontext.domain.PersonalTrainer;
 import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
@@ -31,6 +32,7 @@ public class PersonalTrainerService {
     private static final String PERSONAL_TRAINERS_COLLECTION = "personal-trainers";
     private static final String CONTACTS_COLLECTION = "contacts";
     private static final String ADDRESS_COLLECTION = "addresses";
+    private static final String EVENTS_COLLECTION = "events";
 
     private final Firestore db;
 
@@ -56,11 +58,18 @@ public class PersonalTrainerService {
             return Pair.of(contact, ref);
         }).collect(Collectors.toSet());
 
+        var eventsPerDocRef = personalTrainer.getEvents().stream().map(events -> {
+            var ref = personalTrainerDocRef.collection(EVENTS_COLLECTION).document();
+            events.setId(ref.getId());
+            return Pair.of(events, ref);
+        }).collect(Collectors.toSet());
+
         CheckConstraintsRequestBodyService.checkConstraints(personalTrainer);
 
         batch.create(personalTrainerDocRef, personalTrainer);
         addressPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
         contactsPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
+        eventsPerDocRef.forEach(pair -> batch.create(pair.getRight(), pair.getLeft()));
 
         try {
 
@@ -92,13 +101,16 @@ public class PersonalTrainerService {
                     var docRef = queryDocSnapshot.getReference();
                     var contactsColl = docRef.collection(CONTACTS_COLLECTION).get();
                     var addressColl = docRef.collection(ADDRESS_COLLECTION).get();
+                    var eventsColl = docRef.collection(EVENTS_COLLECTION).get();
 
                     var personalTrainer = queryDocSnapshot.toObject(PersonalTrainer.class);
                     var contacts = contactsColl.get().toObjects(Contact.class);
                     var addresses = addressColl.get().toObjects(Address.class);
+                    var events = eventsColl.get().toObjects(Event.class);
 
                     personalTrainer.addContacts(contacts);
                     personalTrainer.addAddresses(addresses);
+                    personalTrainer.addEvents(events);
                     personalTrainers.add(personalTrainer);
 
                 } catch (Exception e) { }

@@ -47,6 +47,9 @@ case $1 in
     deploy-v1-personal-trainer-crud-contacts)
         deploy_http_function v1-personal-trainer-crud-contacts com.fitmap.function.personaltrainercontext.v1.CrudContactFunction
         ;;
+    deploy-v1-personal-trainer-crud-events)
+        deploy_http_function v1-personal-trainer-crud-events com.fitmap.function.personaltrainercontext.v1.CrudEventFunction
+        ;;
     deploy-v1-personal-trainer-crud-addresses)
         deploy_http_function v1-personal-trainer-crud-addresses com.fitmap.function.personaltrainercontext.v1.CrudAddressFunction
         ;;

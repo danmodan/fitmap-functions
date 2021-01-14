@@ -67,6 +67,10 @@ public class PersonalTrainer {
     @Builder.Default
     private List<@NotNull Address> addresses = new ArrayList<>();
 
+    @Getter(onMethod = @__({ @Exclude }))
+    @Builder.Default
+    private List<@NotNull Event> events = new ArrayList<>();
+
     public void addSports(List<String> sports) {
 
         var newSports = Objects.requireNonNullElse(sports, new ArrayList<String>());
@@ -101,6 +105,15 @@ public class PersonalTrainer {
         this.addresses = Objects.requireNonNullElse(this.addresses, new ArrayList<Address>());
 
         this.addresses.addAll(newAddresses);
+    }
+
+    public void addEvents(List<Event> events) {
+
+        var newEvents = Objects.requireNonNullElse(events, new ArrayList<Event>());
+
+        this.events = Objects.requireNonNullElse(this.events, new ArrayList<Event>());
+
+        this.events.addAll(newEvents);
     }
 
     @Override
