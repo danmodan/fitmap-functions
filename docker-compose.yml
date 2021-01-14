@@ -57,6 +57,23 @@ services:
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
     entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudContactFunction
 
+  fitmap.function.v1-gym-crud-events:
+    container_name: fitmap.function.v1-gym-crud-events
+    image: maven:3-adoptopenjdk-11-openj9
+    working_dir: /app
+    networks:
+      - bubble
+    ports:
+      - "9063:8080"
+    volumes:
+      - $PWD:/app
+      - $HOME/.m2:/root/.m2
+      - $HOME/gcp:$HOME/gcp
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
+      - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.gymcontext.v1.CrudEventFunction
+
   fitmap.function.v1-gym-crud-addresses:
     container_name: fitmap.function.v1-gym-crud-addresses
     image: maven:3-adoptopenjdk-11-openj9

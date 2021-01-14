@@ -67,6 +67,10 @@ public class Gym {
     @Builder.Default
     private List<@NotNull Address> addresses = new ArrayList<>();
 
+    @Getter(onMethod = @__({ @Exclude }))
+    @Builder.Default
+    private List<@NotNull Event> events = new ArrayList<>();
+
     public void addSports(List<String> sports) {
 
         var newSports = Objects.requireNonNullElse(sports, new ArrayList<String>());
@@ -103,6 +107,15 @@ public class Gym {
         this.addresses.addAll(newAddresses);
     }
 
+    public void addEvents(List<Event> events) {
+
+        var newEvents = Objects.requireNonNullElse(events, new ArrayList<Event>());
+
+        this.events = Objects.requireNonNullElse(this.events, new ArrayList<Event>());
+
+        this.events.addAll(newEvents);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -134,6 +147,7 @@ public class Gym {
             .id(gymId)
             .contacts(Contact.from(dto.getContacts(), Contact::from))
             .addresses(Address.from(dto.getAddresses(), Address::from))
+            .events(Event.from(dto.getEvents(), Event::from))
             .biography(dto.getBiography())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())

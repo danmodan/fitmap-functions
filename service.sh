@@ -35,6 +35,9 @@ case $1 in
     deploy-v1-gym-crud-contacts)
         deploy_http_function v1-gym-crud-contacts com.fitmap.function.gymcontext.v1.CrudContactFunction
         ;;
+    deploy-v1-gym-crud-events)
+        deploy_http_function v1-gym-crud-events com.fitmap.function.gymcontext.v1.CrudEventFunction
+        ;;
     deploy-v1-gym-crud-addresses)
         deploy_http_function v1-gym-crud-addresses com.fitmap.function.gymcontext.v1.CrudAddressFunction
         ;;

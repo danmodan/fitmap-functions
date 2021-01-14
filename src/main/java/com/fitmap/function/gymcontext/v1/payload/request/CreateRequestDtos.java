@@ -1,11 +1,14 @@
 package com.fitmap.function.gymcontext.v1.payload.request;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -45,6 +48,9 @@ public class CreateRequestDtos {
 
         @Valid
         private List<@NotNull Address> addresses;
+
+        @Valid
+        private List<@NotNull Event> events;
 
         private List<@NotBlank String> sports;
 
@@ -110,4 +116,50 @@ public class CreateRequestDtos {
         @Size(max = 300)
         private String federalUnit;
     }
+
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonNaming(value = SnakeCaseStrategy.class)
+    @JsonInclude(value = Include.NON_ABSENT)
+    public static class Event {
+
+        @Size(max = 180)
+        private String name;
+
+        private String pictureUrl;
+
+        @Size(max = 2000)
+        private String description;
+
+        @Size(max = 1000)
+        private String eventType;
+
+        private Date beginAt;
+
+        private Date endAt;
+
+        @Size(max = 1000)
+        private String eventCoach;
+
+        private String addressId;
+
+        @PositiveOrZero
+        private BigDecimal currentEventValue;
+
+        @PositiveOrZero
+        private BigDecimal originalEventValue;
+
+        private String contactId;
+
+        private Boolean showPhoneContact;
+
+        private Boolean showEmailContact;
+
+    }
+
 }
