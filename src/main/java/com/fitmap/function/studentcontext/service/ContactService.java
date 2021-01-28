@@ -51,6 +51,7 @@ public class ContactService extends SubCollectionsCrudService<Contact> {
             props.put("phone", contact.getPhone());
             props.put("whatsapp", contact.getWhatsapp());
             props.put("instagram", contact.getInstagram());
+            props.put("mainContact", contact.isMainContact());
 
             return props;
         };

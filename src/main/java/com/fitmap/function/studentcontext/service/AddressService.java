@@ -52,6 +52,7 @@ public class AddressService extends SubCollectionsCrudService<Address> {
             props.put("district", address.getDistrict());
             props.put("city", address.getCity());
             props.put("federalUnit", address.getFederalUnit());
+            props.put("mainAddress", address.isMainAddress());
 
             return props;
         };
