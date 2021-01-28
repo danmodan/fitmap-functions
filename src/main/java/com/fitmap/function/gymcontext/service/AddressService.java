@@ -1,5 +1,6 @@
 package com.fitmap.function.gymcontext.service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -41,14 +42,19 @@ public class AddressService extends SubCollectionsCrudService<Address> {
 
     @Override
     protected Function<Address, Map<String, Object>> getFieldsToUpdate() {
-        return address -> Map.of(
-            "zipCode", address.getZipCode(),
-            "publicPlace", address.getPublicPlace(),
-            "complement", address.getComplement(),
-            "district", address.getDistrict(),
-            "city", address.getCity(),
-            "federalUnit", address.getFederalUnit()
-        );
+        return address -> {
+
+            var props = new HashMap<String, Object>();
+
+            props.put("zipCode", address.getZipCode());
+            props.put("publicPlace", address.getPublicPlace());
+            props.put("complement", address.getComplement());
+            props.put("district", address.getDistrict());
+            props.put("city", address.getCity());
+            props.put("federalUnit", address.getFederalUnit());
+
+            return props;
+        };
     }
 
 }
