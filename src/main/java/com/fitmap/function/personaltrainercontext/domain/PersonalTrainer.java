@@ -75,6 +75,12 @@ public class PersonalTrainer {
     @Builder.Default
     private List<@NotNull SubscriptionPlan> subscriptionPlans = new ArrayList<>();
 
+    private Boolean busySchedule;
+
+    private Boolean onlineService;
+
+    private Boolean homeService;
+
     public void addSports(List<String> sports) {
 
         var newSports = Objects.requireNonNullElse(sports, new ArrayList<String>());
@@ -163,6 +169,9 @@ public class PersonalTrainer {
             .biography(dto.getBiography())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .busySchedule(dto.getBusySchedule())
+            .onlineService(dto.getOnlineService())
+            .homeService(dto.getHomeService())
             .build();
     }
 
@@ -174,6 +183,9 @@ public class PersonalTrainer {
             .biography(dto.getBiography())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .busySchedule(dto.getBusySchedule())
+            .onlineService(dto.getOnlineService())
+            .homeService(dto.getHomeService())
             .build();
     }
 

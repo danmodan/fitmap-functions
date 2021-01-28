@@ -45,6 +45,12 @@ public class EditRequestDtos {
 
         private List<@NotBlank String> galleryPicturesUrls;
 
+        private Boolean busySchedule;
+
+        private Boolean onlineService;
+
+        private Boolean homeService;
+
     }
 
     @Getter
