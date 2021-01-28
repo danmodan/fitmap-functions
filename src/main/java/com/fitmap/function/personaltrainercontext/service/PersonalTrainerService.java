@@ -143,6 +143,18 @@ public class PersonalTrainerService {
             propsToUpdate.put("biography", personalTrainer.getBiography());
         }
 
+        if(personalTrainer.getOnlineService() != null) {
+            propsToUpdate.put("onlineService", personalTrainer.getOnlineService());
+        }
+
+        if(personalTrainer.getHomeService() != null) {
+            propsToUpdate.put("homeService", personalTrainer.getHomeService());
+        }
+
+        if(personalTrainer.getBusySchedule() != null) {
+            propsToUpdate.put("busySchedule", personalTrainer.getBusySchedule());
+        }
+
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
         propsToUpdate.put("sports", FieldValue.arrayUnion(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
 
