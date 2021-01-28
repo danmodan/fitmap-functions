@@ -1,5 +1,6 @@
 package com.fitmap.function.personaltrainercontext.service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -41,13 +42,18 @@ public class ContactService extends SubCollectionsCrudService<Contact> {
 
     @Override
     protected Function<Contact, Map<String, Object>> getFieldsToUpdate() {
-        return contact -> Map.of(
-            "name", contact.getName(),
-            "email", contact.getEmail(),
-            "phone", contact.getPhone(),
-            "whatsapp", contact.getWhatsapp(),
-            "instagram", contact.getInstagram()
-        );
+        return contact -> {
+
+            var props = new HashMap<String, Object>();
+
+            props.put("name", contact.getName());
+            props.put("email", contact.getEmail());
+            props.put("phone", contact.getPhone());
+            props.put("whatsapp", contact.getWhatsapp());
+            props.put("instagram", contact.getInstagram());
+
+            return props;
+        };
     }
 
 }
