@@ -88,6 +88,9 @@ public class CreateRequestDtos {
         @Size(max = 400)
         private String instagram;
 
+        @JsonProperty(value = "is_main_contact")
+        private boolean mainContact;
+    
     }
 
     @Getter
@@ -118,6 +121,10 @@ public class CreateRequestDtos {
 
         @Size(max = 300)
         private String federalUnit;
+
+        @JsonProperty(value = "is_main_address")
+        private boolean mainAddress;
+
     }
 
     @Getter
