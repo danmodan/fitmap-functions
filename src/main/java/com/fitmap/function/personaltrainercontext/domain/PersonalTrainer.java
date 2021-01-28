@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -75,10 +76,13 @@ public class PersonalTrainer {
     @Builder.Default
     private List<@NotNull SubscriptionPlan> subscriptionPlans = new ArrayList<>();
 
+    @JsonProperty(value = "is_busy_schedule")
     private Boolean busySchedule;
 
+    @JsonProperty(value = "has_online_service")
     private Boolean onlineService;
 
+    @JsonProperty(value = "has_home_service")
     private Boolean homeService;
 
     public void addSports(List<String> sports) {

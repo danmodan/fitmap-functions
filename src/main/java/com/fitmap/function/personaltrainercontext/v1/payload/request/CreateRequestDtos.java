@@ -59,10 +59,13 @@ public class CreateRequestDtos {
 
         private List<@NotBlank String> galleryPicturesUrls;
 
+        @JsonProperty(value = "is_busy_schedule")
         private Boolean busySchedule;
 
+        @JsonProperty(value = "has_online_service")
         private Boolean onlineService;
 
+        @JsonProperty(value = "has_home_service")
         private Boolean homeService;
 
     }
