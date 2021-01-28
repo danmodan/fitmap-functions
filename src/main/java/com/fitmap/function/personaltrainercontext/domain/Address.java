@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -59,6 +60,9 @@ public class Address {
     @Size(max = 300)
     private String federalUnit;
 
+    @JsonProperty(value = "is_main_address")
+    private boolean mainAddress;
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -93,6 +97,7 @@ public class Address {
             .district(dto.getDistrict())
             .city(dto.getCity())
             .federalUnit(dto.getFederalUnit())
+            .mainAddress(dto.isMainAddress())
             .build();
     }
 
@@ -107,6 +112,7 @@ public class Address {
             .district(dto.getDistrict())
             .city(dto.getCity())
             .federalUnit(dto.getFederalUnit())
+            .mainAddress(dto.isMainAddress())
             .build();
     }
 
