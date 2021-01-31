@@ -143,8 +143,14 @@ public class GymService {
             propsToUpdate.put("biography", gym.getBiography());
         }
 
+
+        if(gym.getGalleryPicturesUrls().size() > 0) {
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(gym.getGalleryPicturesUrls().toArray(new Object[gym.getGalleryPicturesUrls().size()])));
+        }
+
+        if(gym.getSports().size() > 0) {
         propsToUpdate.put("sports", FieldValue.arrayUnion(gym.getSports().toArray(new Object[gym.getSports().size()])));
+        }
 
         docRef.update(propsToUpdate).get();
     }
@@ -156,8 +162,13 @@ public class GymService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
+        if(gym.getGalleryPicturesUrls().size() > 0) {
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(gym.getGalleryPicturesUrls().toArray(new Object[gym.getGalleryPicturesUrls().size()])));
+        }
+
+        if(gym.getSports().size() > 0) {
         propsToUpdate.put("sports", FieldValue.arrayRemove(gym.getSports().toArray(new Object[gym.getSports().size()])));
+        }
 
         docRef.update(propsToUpdate).get();
     }
