@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
@@ -84,6 +85,10 @@ public class PersonalTrainer {
 
     @JsonProperty(value = "has_home_service")
     private Boolean homeService;
+
+    @NotEmpty
+    @Size(max = 200)
+    private String profileName;
 
     public void addSports(List<String> sports) {
 
@@ -176,6 +181,7 @@ public class PersonalTrainer {
             .busySchedule(dto.getBusySchedule())
             .onlineService(dto.getOnlineService())
             .homeService(dto.getHomeService())
+            .profileName(dto.getProfileName())
             .build();
     }
 
@@ -190,6 +196,7 @@ public class PersonalTrainer {
             .busySchedule(dto.getBusySchedule())
             .onlineService(dto.getOnlineService())
             .homeService(dto.getHomeService())
+            .profileName(dto.getProfileName())
             .build();
     }
 

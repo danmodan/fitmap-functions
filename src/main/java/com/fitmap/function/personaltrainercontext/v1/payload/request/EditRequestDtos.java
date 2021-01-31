@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
@@ -53,6 +54,10 @@ public class EditRequestDtos {
 
         @JsonProperty(value = "has_home_service")
         private Boolean homeService;
+
+        @NotEmpty
+        @Size(max = 200)
+        private String profileName;
 
     }
 

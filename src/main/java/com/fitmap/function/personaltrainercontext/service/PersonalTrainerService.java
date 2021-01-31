@@ -155,13 +155,16 @@ public class PersonalTrainerService {
             propsToUpdate.put("busySchedule", personalTrainer.getBusySchedule());
         }
 
+        if(StringUtils.isNotBlank(personalTrainer.getProfileName())) {
+            propsToUpdate.put("profileName", personalTrainer.getProfileName());
+        }
 
         if(personalTrainer.getGalleryPicturesUrls().size() > 0) {
-        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
+            propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
         }
 
         if(personalTrainer.getSports().size() > 0) {
-        propsToUpdate.put("sports", FieldValue.arrayUnion(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
+            propsToUpdate.put("sports", FieldValue.arrayUnion(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
         }
 
         docRef.update(propsToUpdate).get();
@@ -175,11 +178,11 @@ public class PersonalTrainerService {
         propsToUpdate.put("updatedAt", new Date());
 
         if(personalTrainer.getGalleryPicturesUrls().size() > 0) {
-        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
+            propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
         }
 
         if(personalTrainer.getSports().size() > 0) {
-        propsToUpdate.put("sports", FieldValue.arrayRemove(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
+            propsToUpdate.put("sports", FieldValue.arrayRemove(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
         }
 
         docRef.update(propsToUpdate).get();
