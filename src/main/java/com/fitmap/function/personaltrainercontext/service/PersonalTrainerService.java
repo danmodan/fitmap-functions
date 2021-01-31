@@ -155,8 +155,14 @@ public class PersonalTrainerService {
             propsToUpdate.put("busySchedule", personalTrainer.getBusySchedule());
         }
 
+
+        if(personalTrainer.getGalleryPicturesUrls().size() > 0) {
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
+        }
+
+        if(personalTrainer.getSports().size() > 0) {
         propsToUpdate.put("sports", FieldValue.arrayUnion(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
+        }
 
         docRef.update(propsToUpdate).get();
     }
@@ -168,8 +174,13 @@ public class PersonalTrainerService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
+        if(personalTrainer.getGalleryPicturesUrls().size() > 0) {
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(personalTrainer.getGalleryPicturesUrls().toArray(new Object[personalTrainer.getGalleryPicturesUrls().size()])));
+        }
+
+        if(personalTrainer.getSports().size() > 0) {
         propsToUpdate.put("sports", FieldValue.arrayRemove(personalTrainer.getSports().toArray(new Object[personalTrainer.getSports().size()])));
+        }
 
         docRef.update(propsToUpdate).get();
     }
