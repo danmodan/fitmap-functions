@@ -114,7 +114,10 @@ public class StudentService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
+
+        if(student.getGalleryPicturesUrls().size() > 0) {
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
+        }
 
         docRef.update(propsToUpdate).get();
     }
@@ -126,7 +129,9 @@ public class StudentService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
+        if(student.getGalleryPicturesUrls().size() > 0) {
         propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
+        }
 
         docRef.update(propsToUpdate).get();
     }
