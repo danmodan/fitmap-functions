@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
@@ -44,6 +45,10 @@ public class EditRequestDtos {
         private List<@NotBlank String> sports;
 
         private List<@NotBlank String> galleryPicturesUrls;
+
+        @NotEmpty
+        @Size(max = 200)
+        private String profileName;
 
     }
 

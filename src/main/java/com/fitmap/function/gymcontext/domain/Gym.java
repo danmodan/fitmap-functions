@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
@@ -74,6 +75,10 @@ public class Gym {
     @Getter(onMethod = @__({ @Exclude }))
     @Builder.Default
     private List<@NotNull SubscriptionPlan> subscriptionPlans = new ArrayList<>();
+
+    @NotEmpty
+    @Size(max = 200)
+    private String profileName;
 
     public void addSports(List<String> sports) {
 
@@ -164,6 +169,7 @@ public class Gym {
             .biography(dto.getBiography())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .profileName(dto.getProfileName())
             .build();
     }
 
@@ -175,6 +181,7 @@ public class Gym {
             .biography(dto.getBiography())
             .sports(dto.getSports())
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .profileName(dto.getProfileName())
             .build();
     }
 
