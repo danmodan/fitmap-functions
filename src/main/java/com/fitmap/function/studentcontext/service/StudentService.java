@@ -17,6 +17,7 @@ import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
@@ -114,9 +115,12 @@ public class StudentService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put("updatedAt", new Date());
 
+        if(StringUtils.isNotBlank(student.getProfileName())) {
+            propsToUpdate.put("profileName", student.getProfileName());
+        }
 
         if(student.getGalleryPicturesUrls().size() > 0) {
-        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
+            propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayUnion(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
         }
 
         docRef.update(propsToUpdate).get();
@@ -130,7 +134,7 @@ public class StudentService {
         propsToUpdate.put("updatedAt", new Date());
 
         if(student.getGalleryPicturesUrls().size() > 0) {
-        propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
+            propsToUpdate.put("galleryPicturesUrls", FieldValue.arrayRemove(student.getGalleryPicturesUrls().toArray(new Object[student.getGalleryPicturesUrls().size()])));
         }
 
         docRef.update(propsToUpdate).get();

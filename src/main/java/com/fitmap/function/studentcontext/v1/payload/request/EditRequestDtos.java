@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,6 +37,10 @@ public class EditRequestDtos {
     public static class Student {
 
         private List<@NotBlank String> galleryPicturesUrls;
+
+        @NotEmpty
+        @Size(max = 200)
+        private String profileName;
 
     }
 

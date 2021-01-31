@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -59,6 +61,10 @@ public class Student {
     @Getter(onMethod = @__({ @Exclude }))
     @Builder.Default
     private List<@NotNull Address> addresses = new ArrayList<>();
+
+    @NotEmpty
+    @Size(max = 200)
+    private String profileName;
 
     public void addGalleryPicturesUrls(List<String> galleryPicturesUrls) {
 
@@ -119,6 +125,7 @@ public class Student {
             .contacts(Contact.from(dto.getContacts(), Contact::from))
             .addresses(Address.from(dto.getAddresses(), Address::from))
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .profileName(dto.getProfileName())
             .build();
     }
 
@@ -128,6 +135,7 @@ public class Student {
             .builder()
             .id(studentId)
             .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .profileName(dto.getProfileName())
             .build();
     }
 
