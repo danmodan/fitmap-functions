@@ -26,50 +26,8 @@ case $1 in
     check-deploy)
         gcloud meta list-files-for-upload
         ;;
-    deploy-v1-set-roles)
-        deploy_http_function v1-set-roles com.fitmap.function.setroles.v1.SetRolesFunction
-        ;;
-    deploy-v1-gym-crud-gym)
-        deploy_http_function v1-gym-crud-gym com.fitmap.function.gymcontext.v1.CrudGymFunction
-        ;;
-    deploy-v1-gym-crud-contacts)
-        deploy_http_function v1-gym-crud-contacts com.fitmap.function.gymcontext.v1.CrudContactFunction
-        ;;
-    deploy-v1-gym-crud-events)
-        deploy_http_function v1-gym-crud-events com.fitmap.function.gymcontext.v1.CrudEventFunction
-        ;;
-    deploy-v1-gym-crud-subscription-plans)
-        deploy_http_function v1-gym-crud-subscription-plans com.fitmap.function.gymcontext.v1.CrudSubscriptionPlanFunction
-        ;;
-    deploy-v1-gym-crud-addresses)
-        deploy_http_function v1-gym-crud-addresses com.fitmap.function.gymcontext.v1.CrudAddressFunction
-        ;;
-    deploy-v1-personal-trainer-crud-personal-trainer)
-        deploy_http_function v1-personal-trainer-crud-personal-trainer com.fitmap.function.personaltrainercontext.v1.CrudPersonalTrainerFunction
-        ;;
-    deploy-v1-personal-trainer-crud-contacts)
-        deploy_http_function v1-personal-trainer-crud-contacts com.fitmap.function.personaltrainercontext.v1.CrudContactFunction
-        ;;
-    deploy-v1-personal-trainer-crud-events)
-        deploy_http_function v1-personal-trainer-crud-events com.fitmap.function.personaltrainercontext.v1.CrudEventFunction
-        ;;
-    deploy-v1-personal-trainer-crud-subscription-plans)
-        deploy_http_function v1-personal-trainer-crud-subscription-plans com.fitmap.function.personaltrainercontext.v1.CrudSubscriptionPlanFunction
-        ;;
-    deploy-v1-personal-trainer-crud-addresses)
-        deploy_http_function v1-personal-trainer-crud-addresses com.fitmap.function.personaltrainercontext.v1.CrudAddressFunction
-        ;;
-    deploy-v1-student-crud-student)
-        deploy_http_function v1-student-crud-student com.fitmap.function.studentcontext.v1.CrudStudentFunction
-        ;;
-    deploy-v1-student-crud-contacts)
-        deploy_http_function v1-student-crud-contacts com.fitmap.function.studentcontext.v1.CrudContactFunction
-        ;;
-    deploy-v1-student-crud-addresses)
-        deploy_http_function v1-student-crud-addresses com.fitmap.function.studentcontext.v1.CrudAddressFunction
-        ;;
-    deploy-v1-sport-crud)
-        deploy_http_function v1-sport-crud com.fitmap.function.sportcontext.v1.CrudSportFunction
+    deploy-function-v1)
+        deploy_http_function function-v1 com.fitmap.function.v1.FitMapFunction
         ;;
     *)
         echo -e "Invalid option"

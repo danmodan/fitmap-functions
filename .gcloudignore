@@ -8,30 +8,3 @@ docker-compose.yml
 service.sh
 
 src/test/
-src/main/java/com/fitmap/function/commonfirestore/
-src/main/java/com/fitmap/function/commonfirebase/
-src/main/java/com/fitmap/function/setroles/
-src/main/java/com/fitmap/function/gymcontext/
-src/main/java/com/fitmap/function/personaltrainercontext/
-src/main/java/com/fitmap/function/studentcontext/
-src/main/java/com/fitmap/function/sportcontext/
-
-### set-roles ###
-#!src/main/java/com/fitmap/function/setroles/
-#!src/main/java/com/fitmap/function/commonfirebase/
-
-### gym-context ###
-#!src/main/java/com/fitmap/function/gymcontext/
-#!src/main/java/com/fitmap/function/commonfirestore/
-
-### personal-trainer-context ###
-#!src/main/java/com/fitmap/function/personaltrainercontext/
-#!src/main/java/com/fitmap/function/commonfirestore/
-
-### student-context ###
-#!src/main/java/com/fitmap/function/studentcontext/
-#!src/main/java/com/fitmap/function/commonfirestore/
-
-### sport-context ###
-#!src/main/java/com/fitmap/function/sportcontext/
-#!src/main/java/com/fitmap/function/commonfirestore/
