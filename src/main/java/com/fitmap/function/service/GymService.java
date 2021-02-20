@@ -164,7 +164,9 @@ public class GymService {
 
         docRef.update(propsToUpdate).get();
 
-        var updated = db.collection(Gym.GYMS_COLLECTION).document(gym.getId()).get().get().toObject(Gym.class);
+        var found = find(List.of(gym.getId()));
+
+        var updated = found.get(0);
 
         var addresses = updated.getAddresses();
 

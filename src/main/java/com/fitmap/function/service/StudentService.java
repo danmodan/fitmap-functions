@@ -136,7 +136,9 @@ public class StudentService {
 
         docRef.update(propsToUpdate).get();
 
-        var updated = db.collection(Student.STUDENTS_COLLECTION).document(student.getId()).get().get().toObject(Student.class);
+        var found = find(List.of(student.getId()));
+
+        var updated = found.get(0);
 
         var addresses = updated.getAddresses();
 

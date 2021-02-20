@@ -27,7 +27,7 @@ import lombok.ToString;
 @JsonInclude(value = Include.NON_ABSENT)
 public class Sport {
 
-    public static final String SPORTS_COLLECTION = "sports";
+    public static final String SPORTS_COLLECTION = "sports_v2";
     public static final String ID = "id";
     public static final String NAME = "name";
 

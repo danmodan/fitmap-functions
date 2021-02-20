@@ -1,15 +1,24 @@
 package com.fitmap.function.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import com.fitmap.function.config.FirestoreConfig;
+import com.fitmap.function.domain.Address;
 import com.fitmap.function.domain.Contact;
+import com.fitmap.function.domain.Event;
+import com.fitmap.function.domain.Gym;
+import com.fitmap.function.domain.PersonalTrainer;
 import com.fitmap.function.exception.TerminalException;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteBatch;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
@@ -50,44 +59,178 @@ public class ContactService {
 
         commit(batch);
 
+        ensureOnlyOneMainContact(superEntityId, superCollection, contacts);
+
         return contacts;
 
 	}
 
+    private static void ensureOnlyOneMainContact(String superEntityId, String superCollection, List<Contact> contacts) {
+
+        var createdOpt = contacts.stream().filter(Contact::isMainContact).findAny();
+
+        if(createdOpt.isPresent()) {
+
+            var allContacts = find(superEntityId, superCollection);
+
+            var mainContacts = allContacts.stream().filter(Contact::isMainContact).collect(Collectors.toList());
+
+            if(mainContacts.size() > 1) {
+
+                mainContacts.remove(createdOpt.get());
+
+                mainContacts.forEach(a -> a.setMainContact(false));
+
+                edit(superEntityId, superCollection, mainContacts);
+            }
+
+        }
+
+    }
+
     public static List<Contact> edit(String superEntityId, String superCollection, List<Contact> contacts) {
+
+        var eventsPerContact = getEventsPerContact(superEntityId, superCollection);
+
+        var addressesIds = eventsPerContact
+            .values()
+            .stream()
+            .flatMap(List::stream)
+            .filter(e -> e.getAddress() != null)
+            .map(e -> e.getAddress().getId())
+            .collect(Collectors.toList());
+
+        Map<String, Address> superAddressPerId = AddressService
+            .findInSuperAddressCollection(addressesIds)
+            .stream()
+            .collect(Collectors.toMap(Address::getId, Function.identity()));
 
         var batch = db.batch();
 
-        var contactsCollection = db.collection(superCollection).document(superEntityId).collection(Contact.CONTACTS_COLLECTION);
+        var superEntityDocRef = db.collection(superCollection).document(superEntityId);
+        var contactsCollection = superEntityDocRef.collection(Contact.CONTACTS_COLLECTION);
+        var subEventCollRef = superEntityDocRef.collection(Event.EVENTS_COLLECTION);
+        var superAddressesCollRef = db.collection(Address.ADDRESSES_COLLECTION);
 
         contacts.forEach(contact -> {
 
             CheckConstraintsRequestBodyService.checkConstraints(contact);
 
-            var docRef = contactsCollection.document(contact.getId());
+            var contactDocRef = contactsCollection.document(contact.getId());
+            var events = eventsPerContact.get(contact);
+
+            if(CollectionUtils.isNotEmpty(events)) {
+
+                events.forEach(event -> {
+                    event.setContact(contact);
+                    var eventDocref = subEventCollRef.document(event.getId());
+                    batch.update(eventDocref, Event.CONTACT, event.getContact());
+
+                    var superAddressDocRef = superAddressesCollRef.document(event.getAddress().getId());
+
+                    var superAddress = superAddressPerId.get(event.getAddress().getId());
+                    superAddress.getEvents().remove(event);
+                    superAddress.getEvents().add(event);
+                    batch.update(superAddressDocRef, Address.EVENTS, superAddress.getEvents());
+                });
+            }
 
             var fields = contact.createPropertiesMap();
 
-            batch.update(docRef, fields);
+            batch.update(contactDocRef, fields);
         });
 
         commit(batch);
+
+        ensureOnlyOneMainContact(superEntityId, superCollection, contacts);
 
         return contacts;
 
     }
 
+    public static Map<Contact, List<Event>> getEventsPerContact(String superEntityId, String superCollection) {
+
+        var superEntityIdInList = List.of(superEntityId);
+
+        var eventsPerContact = new HashMap<Contact, List<Event>>();
+
+        switch (superCollection) {
+            case Gym.GYMS_COLLECTION:
+
+                var gyms = GymService.find(superEntityIdInList);
+
+                if(CollectionUtils.isEmpty(gyms)) {
+                    throw new TerminalException("Gym not found. id=" + superEntityId, HttpStatus.NOT_FOUND);
+                }
+
+                var gym = gyms.get(0);
+
+                eventsPerContact.putAll(gym.getEvents().stream().filter(e -> e.getContact() != null).collect(Collectors.groupingBy(Event::getContact)));
+
+                break;
+            case PersonalTrainer.PERSONAL_TRAINERS_COLLECTION:
+
+                var personalTrainers = PersonalTrainerService.find(superEntityIdInList);
+
+                if(CollectionUtils.isEmpty(personalTrainers)) {
+                    throw new TerminalException("Personal trainer not found. id=" + superEntityId, HttpStatus.NOT_FOUND);
+                }
+
+                var personalTrainer = personalTrainers.get(0);
+
+                eventsPerContact.putAll(personalTrainer.getEvents().stream().filter(e -> e.getContact() != null).collect(Collectors.groupingBy(Event::getContact)));
+
+                break;
+        }
+
+        return eventsPerContact;
+    }
+
     public static void delete(String superEntityId, String superCollection, List<String> contactsIds) {
+
+        var eventsPerContactId = getEventsPerContact(superEntityId, superCollection).entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().getId(), Entry::getValue));
+
+        var addressesIds = eventsPerContactId
+            .values()
+            .stream()
+            .flatMap(List::stream)
+            .filter(e -> e.getAddress() != null)
+            .map(e -> e.getAddress().getId())
+            .collect(Collectors.toList());
+
+        Map<String, Address> superAddressPerId = AddressService
+            .findInSuperAddressCollection(addressesIds)
+            .stream()
+            .collect(Collectors.toMap(Address::getId, Function.identity()));
 
         var batch = db.batch();
 
-        var contactsCollection = db.collection(superCollection).document(superEntityId).collection(Contact.CONTACTS_COLLECTION);
+        var superEntityDocRef = db.collection(superCollection).document(superEntityId);
+        var contactsCollection = superEntityDocRef.collection(Contact.CONTACTS_COLLECTION);
+        var subEventCollRef = superEntityDocRef.collection(Event.EVENTS_COLLECTION);
+        var superAddressesCollRef = db.collection(Address.ADDRESSES_COLLECTION);
 
         contactsIds.forEach(id -> {
 
-            var docRef = contactsCollection.document(id);
+            var events = eventsPerContactId.get(id);
 
-            batch.delete(docRef);
+            if(CollectionUtils.isNotEmpty(events)) {
+
+                events.forEach(event -> {
+                    event.setContact(null);
+                    var eventDocref = subEventCollRef.document(event.getId());
+                    batch.update(eventDocref, Event.CONTACT, event.getContact());
+
+                    var superAddressDocRef = superAddressesCollRef.document(event.getAddress().getId());
+
+                    var superAddress = superAddressPerId.get(event.getAddress().getId());
+                    superAddress.getEvents().remove(event);
+                    superAddress.getEvents().add(event);
+                    batch.update(superAddressDocRef, Address.EVENTS, superAddress.getEvents());
+                });
+            }
+
+            batch.delete(contactsCollection.document(id));
         });
 
         commit(batch);

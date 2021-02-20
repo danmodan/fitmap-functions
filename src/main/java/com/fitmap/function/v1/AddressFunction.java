@@ -76,7 +76,11 @@ public class AddressFunction {
             CheckConstraintsRequestBodyService.checkConstraints(item);
         }
 
-        var created = create(Arrays.asList(dto), ReadRequestService.getUserId(request), superCollection);
+        var addresses = Arrays.asList(dto);
+
+        CheckConstraintsRequestBodyService.checkOnlyOneMainElement(addresses, AddressCreateRequest::isMainAddress);
+
+        var created = create(addresses, ReadRequestService.getUserId(request), superCollection);
 
         ResponseService.writeResponse(response, created);
         ResponseService.fillResponseWithStatus(response, HttpStatus.CREATED);
@@ -101,7 +105,11 @@ public class AddressFunction {
             CheckConstraintsRequestBodyService.checkConstraints(item);
         }
 
-        edit(Arrays.asList(dto), ReadRequestService.getUserId(request), superCollection);
+        var addresses = Arrays.asList(dto);
+
+        CheckConstraintsRequestBodyService.checkOnlyOneMainElement(addresses, AddressEditRequest::isMainAddress);
+
+        edit(addresses, ReadRequestService.getUserId(request), superCollection);
 
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }

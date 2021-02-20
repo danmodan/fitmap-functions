@@ -1,5 +1,8 @@
 package com.fitmap.function.service;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+
 import javax.validation.ConstraintViolationException;
 
 import com.fitmap.function.config.ValidatorConfig;
@@ -34,4 +37,24 @@ public class CheckConstraintsRequestBodyService {
         }
 
     }
+
+    public static <T> void checkOnlyOneMainElement(Collection<T> coll, Predicate<T> isMainElement) {
+
+        if (CollectionUtils.isEmpty(coll)) {
+            return;
+        }
+
+        var amount = 0;
+
+        for (var e : coll) {
+            if (isMainElement.test(e)) {
+                amount++;
+            }
+        }
+
+        if (amount > 1) {
+            throw new TerminalException("Cannot exist more than one main element.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

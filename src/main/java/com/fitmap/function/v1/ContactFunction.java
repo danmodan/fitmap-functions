@@ -76,7 +76,11 @@ public class ContactFunction {
             CheckConstraintsRequestBodyService.checkConstraints(item);
         }
 
-        var created = create(Arrays.asList(dto), ReadRequestService.getUserId(request), superCollection);
+        var contacts = Arrays.asList(dto);
+
+        CheckConstraintsRequestBodyService.checkOnlyOneMainElement(contacts, ContactCreateRequest::isMainContact);
+
+        var created = create(contacts, ReadRequestService.getUserId(request), superCollection);
 
         ResponseService.writeResponse(response, created);
         ResponseService.fillResponseWithStatus(response, HttpStatus.CREATED);
@@ -101,7 +105,11 @@ public class ContactFunction {
             CheckConstraintsRequestBodyService.checkConstraints(item);
         }
 
-        edit(Arrays.asList(dto), ReadRequestService.getUserId(request), superCollection);
+        var contacts = Arrays.asList(dto);
+
+        CheckConstraintsRequestBodyService.checkOnlyOneMainElement(contacts, ContactEditRequest::isMainContact);
+
+        edit(contacts, ReadRequestService.getUserId(request), superCollection);
 
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }

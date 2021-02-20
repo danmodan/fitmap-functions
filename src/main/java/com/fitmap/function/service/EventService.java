@@ -208,32 +208,34 @@ public class EventService {
         var addressesCollRef = db.collection(Address.ADDRESSES_COLLECTION);
 
         currentNewEvents.forEach(pair-> {
-            var currentVersion = pair.getLeft();
-            var newVersion = pair.getRight();
+            var currentEventVersion = pair.getLeft();
+            var newEventVersion = pair.getRight();
 
-            var currentAddress = currentVersion.getAddress();
-            var newAddress = newVersion.getAddress();
+            var currentAddress = currentEventVersion.getAddress();
+            var newAddress = newEventVersion.getAddress();
 
-            if(currentAddress == null && newAddress != null) {
+            if((currentAddress == null && newAddress != null) || (currentAddress != null && newAddress != null && currentAddress.equals(newAddress))) {
 
                 var toAdd = addressPerId.get(newAddress.getId());
-                toAdd.addEvent(newVersion);
+                toAdd.removeEvent(newEventVersion);
+                toAdd.addEvent(newEventVersion);
                 batch.set(addressesCollRef.document(newAddress.getId()), toAdd);
 
             } else if(currentAddress != null && newAddress == null) {
 
                 var toRemove = addressPerId.get(currentAddress.getId());
-                toRemove.removeEvent(currentVersion);
+                toRemove.removeEvent(currentEventVersion);
                 batch.set(addressesCollRef.document(currentAddress.getId()), toRemove);
 
             } else if(currentAddress != null && newAddress != null && !currentAddress.equals(newAddress)) {
 
                 var toRemove = addressPerId.get(currentAddress.getId());
-                toRemove.removeEvent(currentVersion);
+                toRemove.removeEvent(currentEventVersion);
                 batch.set(addressesCollRef.document(currentAddress.getId()), toRemove);
 
                 var toAdd = addressPerId.get(newAddress.getId());
-                toAdd.addEvent(newVersion);
+                toAdd.removeEvent(newEventVersion);
+                toAdd.addEvent(newEventVersion);
                 batch.set(addressesCollRef.document(newAddress.getId()), toAdd);
 
             }

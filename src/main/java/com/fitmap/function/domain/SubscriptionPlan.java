@@ -32,7 +32,7 @@ import lombok.ToString;
 @JsonInclude(value = Include.NON_ABSENT)
 public class SubscriptionPlan {
 
-    public static final String SUBSCRIPTION_PLANS_COLLECTION = "subscriptionPlans";
+    public static final String SUBSCRIPTION_PLANS_COLLECTION = "subscriptionPlans_v2";
     public static final String ID = "id";
     public static final String NAME = "name";
     public static final String PRICE = "price";

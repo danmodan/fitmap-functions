@@ -33,7 +33,7 @@ import lombok.ToString;
 @JsonInclude(value = Include.NON_ABSENT)
 public class Event {
 
-    public static final String EVENTS_COLLECTION = "events";
+    public static final String EVENTS_COLLECTION = "events_v2";
     public static final String ID = "id";
     public static final String NAME = "name";
     public static final String PICTURE_URL = "pictureUrl";

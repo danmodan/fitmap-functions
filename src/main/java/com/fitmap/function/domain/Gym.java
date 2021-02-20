@@ -39,7 +39,7 @@ import lombok.ToString;
 @JsonInclude(value = Include.NON_ABSENT)
 public class Gym {
 
-    public static final String GYMS_COLLECTION = "gyms";
+    public static final String GYMS_COLLECTION = "gyms_v2";
     public static final String ID = "id";
     public static final String CREATED_AT = "createdAt";
     public static final String UPDATED_AT = "updatedAt";

@@ -176,7 +176,9 @@ public class PersonalTrainerService {
 
         docRef.update(propsToUpdate).get();
 
-        var updated = db.collection(PersonalTrainer.PERSONAL_TRAINERS_COLLECTION).document(personalTrainer.getId()).get().get().toObject(PersonalTrainer.class);
+        var found = find(List.of(personalTrainer.getId()));
+
+        var updated = found.get(0);
 
         var addresses = updated.getAddresses();
 

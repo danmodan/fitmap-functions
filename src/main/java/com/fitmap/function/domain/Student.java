@@ -36,7 +36,7 @@ import lombok.ToString;
 @JsonInclude(value = Include.NON_ABSENT)
 public class Student {
 
-    public static final String STUDENTS_COLLECTION = "students";
+    public static final String STUDENTS_COLLECTION = "students_v2";
     public static final String ID = "id";
     public static final String CREATED_AT = "createdAt";
     public static final String UPDATED_AT = "updatedAt";

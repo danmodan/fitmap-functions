@@ -1,6 +1,7 @@
 package com.fitmap.function.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,10 @@ public class AddressService {
 
     @SneakyThrows
     public static List<Address> findInSuperAddressCollection(List<String> addressesIds) {
+
+        if(CollectionUtils.isEmpty(addressesIds)) {
+            return Collections.emptyList();
+        }
 
         return db
                  .collection(Address.ADDRESSES_COLLECTION)
@@ -139,9 +144,34 @@ public class AddressService {
 
         commit(batch);
 
+        ensureOnlyOneMainAddress(superEntityId, superCollection, addresses);
+
         return addresses;
 
 	}
+
+    private static void ensureOnlyOneMainAddress(String superEntityId, String superCollection, List<Address> addresses) {
+
+        var createdOpt = addresses.stream().filter(Address::isMainAddress).findAny();
+
+        if(createdOpt.isPresent()) {
+
+            var allAddresses = find(superEntityId, superCollection);
+
+            var mainAddresses = allAddresses.stream().filter(Address::isMainAddress).collect(Collectors.toList());
+
+            if(mainAddresses.size() > 1) {
+
+                mainAddresses.remove(createdOpt.get());
+
+                mainAddresses.forEach(a -> a.setMainAddress(false));
+
+                edit(superEntityId, superCollection, mainAddresses);
+            }
+
+        }
+
+    }
 
     public static Map<Address, List<Event>> getEventsPerAddress(String superEntityId, String superCollection) {
 
@@ -196,6 +226,12 @@ public class AddressService {
 
             CheckConstraintsRequestBodyService.checkConstraints(address);
 
+            var subFields = address.createPropertiesMap();
+            subFields.remove(Address.GYM);
+            subFields.remove(Address.PERSONAL_TRAINER);
+            subFields.remove(Address.STUDENT);
+            subFields.remove(Address.EVENTS);
+
             var subDocRef = subAddressesCollRef.document(address.getId());
             var superDocRef = superAddressesCollRef.document(address.getId());
             var events = eventsPerAddress.get(address);
@@ -209,18 +245,19 @@ public class AddressService {
                 });
             }
 
-            var fields = address.createPropertiesMap();
-            fields.remove(Address.GYM);
-            fields.remove(Address.PERSONAL_TRAINER);
-            fields.remove(Address.STUDENT);
-            fields.remove(Address.EVENTS);
+            var superFields = address.withEvents(events).createPropertiesMap();
+            superFields.remove(Address.GYM);
+            superFields.remove(Address.PERSONAL_TRAINER);
+            superFields.remove(Address.STUDENT);
 
-            batch.update(subDocRef, fields);
-            batch.update(superDocRef, fields);
+            batch.update(subDocRef, subFields);
+            batch.update(superDocRef, superFields);
 
         });
 
         commit(batch);
+
+        ensureOnlyOneMainAddress(superEntityId, superCollection, addresses);
 
         return addresses;
 

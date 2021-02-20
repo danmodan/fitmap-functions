@@ -35,7 +35,7 @@ import lombok.With;
 @JsonInclude(value = Include.NON_ABSENT)
 public class Address {
 
-    public static final String ADDRESSES_COLLECTION = "addresses";
+    public static final String ADDRESSES_COLLECTION = "addresses_v2";
     public static final String ID = "id";
     public static final String ZIP_CODE = "zipCode";
     public static final String PUBLIC_PLACE = "publicPlace";
