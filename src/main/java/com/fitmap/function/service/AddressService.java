@@ -167,6 +167,11 @@ public class AddressService {
                 mainAddresses.forEach(a -> a.setMainAddress(false));
 
                 edit(superEntityId, superCollection, mainAddresses);
+            } else if(mainAddresses.isEmpty() && !allAddresses.isEmpty()) {
+
+                var updateToMain = allAddresses.get(0);
+                updateToMain.setMainAddress(true);
+                edit(superEntityId, superCollection, List.of(updateToMain));
             }
 
         }

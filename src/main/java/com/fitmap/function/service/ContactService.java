@@ -82,6 +82,11 @@ public class ContactService {
                 mainContacts.forEach(a -> a.setMainContact(false));
 
                 edit(superEntityId, superCollection, mainContacts);
+            } else if(mainContacts.isEmpty() && !allContacts.isEmpty()) {
+
+                var updateToMain = allContacts.get(0);
+                updateToMain.setMainContact(true);
+                edit(superEntityId, superCollection, List.of(updateToMain));
             }
 
         }
