@@ -19,6 +19,7 @@ import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
@@ -75,7 +76,7 @@ public class PersonalTrainerService {
         batch.create(personalTrainerDocRef, personalTrainer);
         addressPerDocRef.forEach(pair -> {
             batch.create(pair.getRight(), pair.getLeft());
-            var newAddress = pair.getLeft().withPersonalTrainerId(personalTrainer.getId());
+            var newAddress = pair.getLeft().withPersonalTrainer(personalTrainer);
             var newAddressDocRef = addressesCollRef.document(newAddress.getId());
             masterAddressPerDocRef.add(Pair.of(newAddress, newAddressDocRef));
         });
@@ -174,6 +175,38 @@ public class PersonalTrainerService {
         }
 
         docRef.update(propsToUpdate).get();
+
+        var updated = db.collection(PersonalTrainer.PERSONAL_TRAINERS_COLLECTION).document(personalTrainer.getId()).get().get().toObject(PersonalTrainer.class);
+
+        var addresses = updated.getAddresses();
+
+        if(CollectionUtils.isEmpty(addresses)) {
+            return;
+        }
+
+        var batch = db.batch();
+
+        var addressColl = db.collection(Address.ADDRESSES_COLLECTION);
+
+        addresses.forEach(address -> {
+
+            var id = address.getId();
+
+            var addressDocRef = addressColl.document(id);
+
+            batch.update(addressDocRef, Address.PERSONAL_TRAINER, updated);
+        });
+
+        try {
+
+            batch.commit().get();
+
+        } catch (Exception e) {
+
+            log.log(Level.SEVERE, e.getMessage(), e);
+
+            throw new TerminalException(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @SneakyThrows

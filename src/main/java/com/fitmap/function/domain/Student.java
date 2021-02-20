@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.Exclude;
 
 import lombok.AllArgsConstructor;
@@ -47,7 +46,6 @@ public class Student {
     public static final String PROFILE_NAME = "profileName";
 
     @NotBlank
-    @DocumentId
     private String id;
 
     @NotNull

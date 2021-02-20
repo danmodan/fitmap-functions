@@ -17,6 +17,7 @@ import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class StudentService {
         batch.create(studentDocRef, student);
         addressPerDocRef.forEach(pair -> {
             batch.create(pair.getRight(), pair.getLeft());
-            var newAddress = pair.getLeft().withStudentId(student.getId());
+            var newAddress = pair.getLeft().withStudent(student);
             var newAddressDocRef = addressesCollRef.document(newAddress.getId());
             masterAddressPerDocRef.add(Pair.of(newAddress, newAddressDocRef));
         });
@@ -134,6 +135,38 @@ public class StudentService {
         }
 
         docRef.update(propsToUpdate).get();
+
+        var updated = db.collection(Student.STUDENTS_COLLECTION).document(student.getId()).get().get().toObject(Student.class);
+
+        var addresses = updated.getAddresses();
+
+        if(CollectionUtils.isEmpty(addresses)) {
+            return;
+        }
+
+        var batch = db.batch();
+
+        var addressColl = db.collection(Address.ADDRESSES_COLLECTION);
+
+        addresses.forEach(address -> {
+
+            var id = address.getId();
+
+            var addressDocRef = addressColl.document(id);
+
+            batch.update(addressDocRef, Address.STUDENT, updated);
+        });
+
+        try {
+
+            batch.commit().get();
+
+        } catch (Exception e) {
+
+            log.log(Level.SEVERE, e.getMessage(), e);
+
+            throw new TerminalException(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @SneakyThrows

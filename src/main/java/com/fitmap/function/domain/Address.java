@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.google.cloud.firestore.annotation.DocumentId;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,13 +47,12 @@ public class Address {
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String GEO_HASH = "geoHash";
-    public static final String GYM_ID = "gymId";
-    public static final String PERSONAL_TRAINER_ID = "personalTrainerId";
-    public static final String STUDENT_ID = "studentId";
-    public static final String EVENTS_IDS = "eventsIds";
+    public static final String GYM = "gym";
+    public static final String PERSONAL_TRAINER = "personalTrainer";
+    public static final String STUDENT = "student";
+    public static final String EVENTS = "events";
 
     @NotBlank
-    @DocumentId
     private String id;
 
     @Size(max = 50)
@@ -85,24 +83,38 @@ public class Address {
     private String geoHash;
 
     @With
-    private String gymId;
+    private Gym gym;
 
     @With
-    private String personalTrainerId;
+    private PersonalTrainer personalTrainer;
 
     @With
-    private String studentId;
+    private Student student;
 
     @With
-    private List<String> eventsIds;
+    private List<Event> events;
 
-    public void addEventsIds(List<String> eventsIds) {
+    public void addEvents(List<Event> events) {
 
-        var newEventsIds = Objects.requireNonNullElse(eventsIds, new ArrayList<String>());
+        var newEvents = Objects.requireNonNullElse(events, new ArrayList<Event>());
 
-        this.eventsIds = Objects.requireNonNullElse(this.eventsIds, new ArrayList<String>());
+        this.events = Objects.requireNonNullElse(this.events, new ArrayList<Event>());
 
-        this.eventsIds.addAll(newEventsIds);
+        this.events.addAll(newEvents);
+    }
+
+    public void addEvent(Event event) {
+
+        addEvents(List.of(event));
+    }
+
+    public void removeEvent(Event event) {
+
+        if(this.events == null) {
+            return;
+        }
+
+        this.events.remove(event);
     }
 
     @Override
@@ -133,6 +145,7 @@ public class Address {
 
         var fields = new HashMap<String, Object>();
 
+        fields.put(ID, id);
         fields.put(ZIP_CODE, zipCode);
         fields.put(PUBLIC_PLACE, publicPlace);
         fields.put(COMPLEMENT, complement);
@@ -143,10 +156,10 @@ public class Address {
         fields.put(LATITUDE, latitude);
         fields.put(LONGITUDE, longitude);
         fields.put(GEO_HASH, geoHash);
-        fields.put(GYM_ID, gymId);
-        fields.put(PERSONAL_TRAINER_ID, personalTrainerId);
-        fields.put(STUDENT_ID, studentId);
-        fields.put(EVENTS_IDS, eventsIds);
+        fields.put(GYM, gym);
+        fields.put(PERSONAL_TRAINER, personalTrainer);
+        fields.put(STUDENT, student);
+        fields.put(EVENTS, events);
 
         return fields;
     }

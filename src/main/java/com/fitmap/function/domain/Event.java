@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.google.cloud.firestore.annotation.DocumentId;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,15 +42,14 @@ public class Event {
     public static final String BEGIN_AT = "beginAt";
     public static final String END_AT = "endAt";
     public static final String EVENT_COACH = "eventCoach";
-    public static final String ADDRESS_ID = "addressId";
+    public static final String ADDRESS = "address";
     public static final String CURRENT_EVENT_VALUE = "currentEventValue";
     public static final String ORIGINAL_EVENT_VALUE = "originalEventValue";
-    public static final String CONTACT_ID = "contactId";
+    public static final String CONTACT = "contact";
     public static final String SHOW_PHONE_CONTACT = "showPhoneContact";
     public static final String SHOW_EMAIL_CONTACT = "showEmailContact";
 
     @NotBlank
-    @DocumentId
     private String id;
 
     @Size(max = 180)
@@ -72,7 +70,7 @@ public class Event {
     @Size(max = 1000)
     private String eventCoach;
 
-    private String addressId;
+    private Address address;
 
     @PositiveOrZero
     private BigDecimal currentEventValue;
@@ -80,7 +78,7 @@ public class Event {
     @PositiveOrZero
     private BigDecimal originalEventValue;
 
-    private String contactId;
+    private Contact contact;
 
     private Boolean showPhoneContact;
 
@@ -114,6 +112,7 @@ public class Event {
 
         var fields = new HashMap<String, Object>();
 
+        fields.put(ID, id);
         fields.put(NAME, name);
         fields.put(PICTURE_URL, pictureUrl);
         fields.put(DESCRIPTION, description);
@@ -121,10 +120,10 @@ public class Event {
         fields.put(BEGIN_AT, beginAt);
         fields.put(END_AT, endAt);
         fields.put(EVENT_COACH, eventCoach);
-        fields.put(ADDRESS_ID, addressId);
+        fields.put(ADDRESS, address);
         fields.put(CURRENT_EVENT_VALUE, currentEventValue);
         fields.put(ORIGINAL_EVENT_VALUE, originalEventValue);
-        fields.put(CONTACT_ID, contactId);
+        fields.put(CONTACT, contact);
         fields.put(SHOW_PHONE_CONTACT, showPhoneContact);
         fields.put(SHOW_EMAIL_CONTACT, showEmailContact);
 

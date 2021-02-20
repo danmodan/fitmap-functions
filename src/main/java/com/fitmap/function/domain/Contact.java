@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.google.cloud.firestore.annotation.DocumentId;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +42,6 @@ public class Contact {
     public static final String MAIN_CONTACT = "mainContact";
 
     @NotBlank
-    @DocumentId
     private String id;
 
     @Size(max = 500)
@@ -93,6 +91,7 @@ public class Contact {
 
         var fields = new HashMap<String, Object>();
 
+        fields.put(ID, id);
         fields.put(NAME, name);
         fields.put(EMAIL, email);
         fields.put(PHONE, phone);

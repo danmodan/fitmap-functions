@@ -18,7 +18,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.Exclude;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,7 +57,6 @@ public class PersonalTrainer {
     public static final String PROFILE_NAME = "profileName";
 
     @NotBlank
-    @DocumentId
     private String id;
 
     @NotNull

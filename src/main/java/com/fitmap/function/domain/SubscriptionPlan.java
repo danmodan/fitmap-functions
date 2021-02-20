@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.google.cloud.firestore.annotation.DocumentId;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,7 +40,6 @@ public class SubscriptionPlan {
     public static final String DESCRIPTION = "description";
 
     @NotBlank
-    @DocumentId
     private String id;
 
     @Size(max = 180)
@@ -84,6 +82,7 @@ public class SubscriptionPlan {
 
         var fields = new HashMap<String, Object>();
 
+        fields.put(ID, id);
         fields.put(NAME, name);
         fields.put(PRICE, price);
         fields.put(NUMBER_MONTH, numberMonth);
