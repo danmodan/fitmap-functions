@@ -1,4 +1,4 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +11,8 @@ import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v1.payload.request.AddressCreateRequest;
-import com.fitmap.function.v1.payload.request.AddressEditRequest;
+import com.fitmap.function.v2.payload.request.AddressCreateRequest;
+import com.fitmap.function.v2.payload.request.AddressEditRequest;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 

@@ -1,8 +1,8 @@
-package com.fitmap.function.v1.payload.request;
+package com.fitmap.function.v2.payload.request;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
@@ -28,21 +28,38 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class SubscriptionPlanEditRequest {
-
-    @NotBlank
-    private String id;
+public class EventCreateRequest {
 
     @Size(max = 180)
     private String name;
 
-    @PositiveOrZero
-    private BigDecimal price;
-
-    @PositiveOrZero
-    private int numberMonth;
+    private String pictureUrl;
 
     @Size(max = 2000)
     private String description;
+
+    @Size(max = 1000)
+    private String eventType;
+
+    private Date beginAt;
+
+    private Date endAt;
+
+    @Size(max = 1000)
+    private String eventCoach;
+
+    private String addressId;
+
+    @PositiveOrZero
+    private BigDecimal currentEventValue;
+
+    @PositiveOrZero
+    private BigDecimal originalEventValue;
+
+    private String contactId;
+
+    private Boolean showPhoneContact;
+
+    private Boolean showEmailContact;
 
 }

@@ -6,8 +6,8 @@ networks:
 
 services:
 
-  fitmap.function-v1:
-    container_name: fitmap.function-v1
+  fitmap.function-v2:
+    container_name: fitmap.function-v2
     image: maven:3-adoptopenjdk-11-openj9
     working_dir: /app
     networks:
@@ -21,4 +21,4 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp/google_application_credentials.json
       - GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT
-    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.v1.FitMapFunction
+    entrypoint: mvn function:run -Drun.functionTarget=com.fitmap.function.v2.FitMapFunction

@@ -10,7 +10,7 @@ import javax.validation.ConstraintViolationException;
 
 import com.fitmap.function.config.ObjectMapperConfig;
 import com.fitmap.function.exception.TerminalException;
-import com.fitmap.function.v1.payload.response.ErrorResponse;
+import com.fitmap.function.v2.payload.response.ErrorResponse;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 

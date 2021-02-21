@@ -1,9 +1,9 @@
-package com.fitmap.function.v1.payload.request;
+package com.fitmap.function.v2.payload.request;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,12 +28,21 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class StudentEditRequest {
+public class SubscriptionPlanEditRequest {
 
-    private List<@NotBlank String> galleryPicturesUrls;
+    @NotBlank
+    private String id;
 
-    @NotEmpty
-    @Size(max = 200)
-    private String profileName;
+    @Size(max = 180)
+    private String name;
+
+    @PositiveOrZero
+    private BigDecimal price;
+
+    @PositiveOrZero
+    private int numberMonth;
+
+    @Size(max = 2000)
+    private String description;
 
 }

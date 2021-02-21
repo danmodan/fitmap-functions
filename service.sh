@@ -26,8 +26,8 @@ case $1 in
     check-deploy)
         gcloud meta list-files-for-upload
         ;;
-    deploy-function-v1)
-        deploy_http_function function-v1 com.fitmap.function.v1.FitMapFunction
+    deploy-function-v2)
+        deploy_http_function function-v2 com.fitmap.function.v2.FitMapFunction
         ;;
     *)
         echo -e "Invalid option"

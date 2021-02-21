@@ -1,4 +1,4 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import java.time.ZonedDateTime;
 import java.util.logging.Level;
@@ -32,7 +32,7 @@ public class FitMapFunction implements HttpFunction {
 
     public FitMapFunction() {
 
-        log.log(Level.INFO, "init FitMapFunction /api/v1. timestamp=" + ZonedDateTime.now());
+        log.log(Level.INFO, "init FitMapFunction /api/v2. timestamp=" + ZonedDateTime.now());
     }
 
     @Override
@@ -43,52 +43,52 @@ public class FitMapFunction implements HttpFunction {
             final var path = request.getPath();
 
             switch (path) {
-                case "/api/v1/set-roles":
+                case "/api/v2/set-roles":
                     SetRolesFunction.service(request, response);
                     break;
-                case "/api/v1/gym":
+                case "/api/v2/gym":
                     GymFunction.service(request, response);
                     break;
-                case "/api/v1/gym/contacts":
+                case "/api/v2/gym/contacts":
                     ContactFunction.service(request, response, Gym.GYMS_COLLECTION);
                     break;
-                case "/api/v1/gym/addresses":
+                case "/api/v2/gym/addresses":
                     AddressFunction.service(request, response, Gym.GYMS_COLLECTION);
                     break;
-                case "/api/v1/gym/events":
+                case "/api/v2/gym/events":
                     EventFunction.service(request, response, Gym.GYMS_COLLECTION);
                     break;
-                case "/api/v1/gym/subscription-plans":
+                case "/api/v2/gym/subscription-plans":
                     SubscriptionPlanFunction.service(request, response, Gym.GYMS_COLLECTION);
                     break;
-                case "/api/v1/personal-trainer":
+                case "/api/v2/personal-trainer":
                     PersonalTrainerFunction.service(request, response);
                     break;
-                case "/api/v1/personal-trainer/contacts":
+                case "/api/v2/personal-trainer/contacts":
                     ContactFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
-                case "/api/v1/personal-trainer/addresses":
+                case "/api/v2/personal-trainer/addresses":
                     AddressFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
-                case "/api/v1/personal-trainer/events":
+                case "/api/v2/personal-trainer/events":
                     EventFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
-                case "/api/v1/personal-trainer/subscription-plans":
+                case "/api/v2/personal-trainer/subscription-plans":
                     SubscriptionPlanFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
-                case "/api/v1/student":
+                case "/api/v2/student":
                     StudentFunction.service(request, response);
                     break;
-                case "/api/v1/student/contacts":
+                case "/api/v2/student/contacts":
                     ContactFunction.service(request, response, Student.STUDENTS_COLLECTION);
                     break;
-                case "/api/v1/student/addresses":
+                case "/api/v2/student/addresses":
                     AddressFunction.service(request, response, Student.STUDENTS_COLLECTION);
                     break;
-                case "/api/v1/sport":
+                case "/api/v2/sport":
                     SportFunction.service(request, response);
                     break;
-                case "/api/v1/locations":
+                case "/api/v2/locations":
                     LocationsFunction.service(request, response);
                     break;
                 default:

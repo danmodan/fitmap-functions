@@ -1,4 +1,4 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,12 +13,12 @@ import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.service.PersonalTrainerService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v1.payload.request.AddressCreateRequest;
-import com.fitmap.function.v1.payload.request.ContactCreateRequest;
-import com.fitmap.function.v1.payload.request.EventCreateRequest;
-import com.fitmap.function.v1.payload.request.PersonalTrainerCreateRequest;
-import com.fitmap.function.v1.payload.request.PersonalTrainerEditRequest;
-import com.fitmap.function.v1.payload.request.SubscriptionPlanCreateRequest;
+import com.fitmap.function.v2.payload.request.AddressCreateRequest;
+import com.fitmap.function.v2.payload.request.ContactCreateRequest;
+import com.fitmap.function.v2.payload.request.EventCreateRequest;
+import com.fitmap.function.v2.payload.request.PersonalTrainerCreateRequest;
+import com.fitmap.function.v2.payload.request.PersonalTrainerEditRequest;
+import com.fitmap.function.v2.payload.request.SubscriptionPlanCreateRequest;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 

@@ -1,18 +1,18 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.fitmap.function.domain.SubscriptionPlan;
+import com.fitmap.function.domain.Contact;
 import com.fitmap.function.mapper.DomainMapper;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
-import com.fitmap.function.service.SubscriptionPlanService;
+import com.fitmap.function.service.ContactService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v1.payload.request.SubscriptionPlanCreateRequest;
-import com.fitmap.function.v1.payload.request.SubscriptionPlanEditRequest;
+import com.fitmap.function.v2.payload.request.ContactCreateRequest;
+import com.fitmap.function.v2.payload.request.ContactEditRequest;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 
@@ -24,7 +24,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SubscriptionPlanFunction {
+public class ContactFunction {
 
     public static void service(HttpRequest request, HttpResponse response, String superCollection) {
 
@@ -59,16 +59,16 @@ public class SubscriptionPlanFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
     }
 
-    private static List<SubscriptionPlan> find(String superEntityId, String superCollection) {
+    private static List<Contact> find(String superEntityId, String superCollection) {
 
-        return SubscriptionPlanService.find(superEntityId, superCollection);
+        return ContactService.find(superEntityId, superCollection);
     }
 
     private static void doPost(HttpRequest request, HttpResponse response, String superCollection) {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, SubscriptionPlanCreateRequest[].class);
+        var dto = ReadRequestService.getBody(request, ContactCreateRequest[].class);
 
         CheckConstraintsRequestBodyService.checkNotEmpty(dto);
 
@@ -76,24 +76,28 @@ public class SubscriptionPlanFunction {
             CheckConstraintsRequestBodyService.checkConstraints(item);
         }
 
-        var created = create(Arrays.asList(dto), ReadRequestService.getUserId(request), superCollection);
+        var contacts = Arrays.asList(dto);
+
+        CheckConstraintsRequestBodyService.checkOnlyOneMainElement(contacts, ContactCreateRequest::isMainContact);
+
+        var created = create(contacts, ReadRequestService.getUserId(request), superCollection);
 
         ResponseService.writeResponse(response, created);
         ResponseService.fillResponseWithStatus(response, HttpStatus.CREATED);
     }
 
-    private static List<SubscriptionPlan> create(List<SubscriptionPlanCreateRequest> dtos, String superEntityId, String superCollection) {
+    private static List<Contact> create(List<ContactCreateRequest> dtos, String superEntityId, String superCollection) {
 
         var subEntities = DomainMapper.from(dtos, DomainMapper::from);
 
-        return SubscriptionPlanService.create(superEntityId, superCollection, subEntities);
+        return ContactService.create(superEntityId, superCollection, subEntities);
     }
 
     private static void doPut(HttpRequest request, HttpResponse response, String superCollection) {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, SubscriptionPlanEditRequest[].class);
+        var dto = ReadRequestService.getBody(request, ContactEditRequest[].class);
 
         CheckConstraintsRequestBodyService.checkNotEmpty(dto);
 
@@ -101,16 +105,20 @@ public class SubscriptionPlanFunction {
             CheckConstraintsRequestBodyService.checkConstraints(item);
         }
 
-        edit(Arrays.asList(dto), ReadRequestService.getUserId(request), superCollection);
+        var contacts = Arrays.asList(dto);
+
+        CheckConstraintsRequestBodyService.checkOnlyOneMainElement(contacts, ContactEditRequest::isMainContact);
+
+        edit(contacts, ReadRequestService.getUserId(request), superCollection);
 
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private static List<SubscriptionPlan> edit(List<SubscriptionPlanEditRequest> dtos, String superEntityId, String superCollection) {
+    private static List<Contact> edit(List<ContactEditRequest> dtos, String superEntityId, String superCollection) {
 
         var subEntities = DomainMapper.from(dtos, DomainMapper::from);
 
-        return SubscriptionPlanService.edit(superEntityId, superCollection, subEntities);
+        return ContactService.edit(superEntityId, superCollection, subEntities);
     }
 
     private static void doDelete(HttpRequest request, HttpResponse response, String superCollection) {
@@ -128,9 +136,9 @@ public class SubscriptionPlanFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private static void delete(List<String> subscriptionPlansIds, String superEntityId, String superCollection) {
+    private static void delete(List<String> contactsIds, String superEntityId, String superCollection) {
 
-        SubscriptionPlanService.delete(superEntityId, superCollection, subscriptionPlansIds);
+        ContactService.delete(superEntityId, superCollection, contactsIds);
     }
 
 }

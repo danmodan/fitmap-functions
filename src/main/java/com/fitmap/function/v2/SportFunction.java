@@ -1,4 +1,4 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import com.fitmap.function.exception.TerminalException;
 import com.fitmap.function.service.AddressService;

@@ -1,4 +1,4 @@
-package com.fitmap.function.v1.payload.response;
+package com.fitmap.function.v2.payload.response;
 
 import java.util.Date;
 import java.util.Map;

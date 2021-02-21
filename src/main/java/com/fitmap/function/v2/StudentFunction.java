@@ -1,24 +1,22 @@
-package com.fitmap.function.v1;
+package com.fitmap.function.v2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.fitmap.function.domain.Gym;
+import com.fitmap.function.domain.Student;
 import com.fitmap.function.mapper.DomainMapper;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
-import com.fitmap.function.service.GymService;
+import com.fitmap.function.service.StudentService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v1.payload.request.AddressCreateRequest;
-import com.fitmap.function.v1.payload.request.ContactCreateRequest;
-import com.fitmap.function.v1.payload.request.EventCreateRequest;
-import com.fitmap.function.v1.payload.request.GymCreateRequest;
-import com.fitmap.function.v1.payload.request.GymEditRequest;
-import com.fitmap.function.v1.payload.request.SubscriptionPlanCreateRequest;
+import com.fitmap.function.v2.payload.request.AddressCreateRequest;
+import com.fitmap.function.v2.payload.request.ContactCreateRequest;
+import com.fitmap.function.v2.payload.request.StudentCreateRequest;
+import com.fitmap.function.v2.payload.request.StudentEditRequest;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 
@@ -30,7 +28,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GymFunction {
+public class StudentFunction {
 
     public static void service(HttpRequest request, HttpResponse response) {
 
@@ -69,7 +67,7 @@ public class GymFunction {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, GymCreateRequest.class);
+        var dto = ReadRequestService.getBody(request, StudentCreateRequest.class);
 
         CheckConstraintsRequestBodyService.checkConstraints(dto);
 
@@ -83,7 +81,7 @@ public class GymFunction {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, GymEditRequest.class);
+        var dto = ReadRequestService.getBody(request, StudentEditRequest.class);
 
         CheckConstraintsRequestBodyService.checkConstraints(dto);
 
@@ -96,7 +94,7 @@ public class GymFunction {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, GymEditRequest.class);
+        var dto = ReadRequestService.getBody(request, StudentEditRequest.class);
 
         CheckConstraintsRequestBodyService.checkConstraints(dto);
 
@@ -105,72 +103,50 @@ public class GymFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private static void update(GymEditRequest dto, String gymId) {
-
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+    private static void update(StudentEditRequest dto, String studentId) {
 
         var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
 
-        dto.setSports(sports);
         dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
-        var gym = DomainMapper.from(dto, gymId);
+        var student = DomainMapper.from(dto, studentId);
 
-        GymService.updateProps(gym);
+        StudentService.updateProps(student);
     }
 
-    private static void remove(GymEditRequest dto, String gymId) {
-
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+    private static void remove(StudentEditRequest dto, String studentId) {
 
         var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
 
-        dto.setSports(sports);
         dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
-        var gym = DomainMapper.from(dto, gymId);
+        var student = DomainMapper.from(dto, studentId);
 
-        GymService.removeElementsFromArraysProps(gym);
+        StudentService.removeElementsFromArraysProps(student);
     }
 
-    private static Gym create(GymCreateRequest dto, String gymId) {
+    private static Student create(StudentCreateRequest dto, String studentId) {
 
         var addresses = Objects.requireNonNullElse(dto.getAddresses(), new ArrayList<AddressCreateRequest>());
 
         var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<ContactCreateRequest>());
 
-        var events = Objects.requireNonNullElse(dto.getEvents(), new ArrayList<EventCreateRequest>());
-        events.forEach(event -> {
-            event.setAddressId(null);
-            event.setContactId(null);
-        });
-
-        var subscriptionPlans = Objects.requireNonNullElse(dto.getSubscriptionPlans(), new ArrayList<SubscriptionPlanCreateRequest>());
-
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
-
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
-
         dto.setAddresses(addresses);
         dto.setContacts(contacts);
-        dto.setEvents(events);
-        dto.setSubscriptionPlans(subscriptionPlans);
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
 
-        var gym = DomainMapper.from(dto, gymId);
+        var student = DomainMapper.from(dto, studentId);
 
-        return GymService.create(gym);
+        return StudentService.create(student);
     }
 
-    private static List<Gym> find(List<String> ids) {
+    private static List<Student> find(List<String> ids) {
 
         if(ids.isEmpty()) {
 
             return Collections.emptyList();
         }
 
-        return GymService.find(ids);
+        return StudentService.find(ids);
     }
 
 }

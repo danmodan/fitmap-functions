@@ -1,4 +1,4 @@
-package com.fitmap.function.v1.payload.request;
+package com.fitmap.function.v2.payload.request;
 
 import java.util.List;
 
@@ -28,12 +28,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class GymEditRequest {
-
-    @Size(max = 2000)
-    private String biography;
-
-    private List<@NotBlank String> sports;
+public class StudentEditRequest {
 
     private List<@NotBlank String> galleryPicturesUrls;
 

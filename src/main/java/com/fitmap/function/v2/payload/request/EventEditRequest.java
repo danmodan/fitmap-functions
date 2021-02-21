@@ -1,4 +1,4 @@
-package com.fitmap.function.v1.payload.request;
+package com.fitmap.function.v2.payload.request;
 
 import java.math.BigDecimal;
 import java.util.Date;
