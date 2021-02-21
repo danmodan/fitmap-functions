@@ -88,6 +88,9 @@ public class FitMapFunction implements HttpFunction {
                 case "/api/v1/sport":
                     SportFunction.service(request, response);
                     break;
+                case "/api/v1/locations":
+                    LocationsFunction.service(request, response);
+                    break;
                 default:
                     throw new TerminalException("No mapping found for HTTP request path [" + path + "]", HttpStatus.NOT_FOUND);
             }

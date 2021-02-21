@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 import com.fitmap.function.config.ValidatorConfig;
 import com.fitmap.function.exception.TerminalException;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 
@@ -57,4 +58,14 @@ public class CheckConstraintsRequestBodyService {
         }
     }
 
+    public static void checkIsDoubleParsables(String... values) {
+
+        for(var value : values) {
+
+            if(!NumberUtils.isParsable(value)) {
+
+                throw new TerminalException("The value [" + value + "] cannot be converted to Double.", HttpStatus.BAD_REQUEST);
+            }
+        }
+    }
 }

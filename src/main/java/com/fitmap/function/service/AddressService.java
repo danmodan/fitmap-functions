@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.core.GeoHashQuery;
+import com.firebase.geofire.util.GeoUtils;
 import com.fitmap.function.config.FirestoreConfig;
 import com.fitmap.function.domain.Address;
 import com.fitmap.function.domain.Event;
@@ -16,11 +19,14 @@ import com.fitmap.function.domain.PersonalTrainer;
 import com.fitmap.function.domain.Student;
 import com.fitmap.function.exception.TerminalException;
 import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldPath;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteBatch;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
@@ -51,17 +57,58 @@ public class AddressService {
 
     }
 
-    // @SneakyThrows
-    // public static List<Address> findById(List<String> addressesIds) {
+    @SneakyThrows
+    public static List<Address> findAddressesNearBy(double latitude, double longitude, double radius) {
 
-    //     return db
-    //              .collection(Address.ADDRESSES_COLLECTION)
-    //              .whereIn(FieldPath.documentId(), addressesIds)
-    //              .get()
-    //              .get()
-    //              .toObjects(Address.class);
+        if(radius <= 0) {
+            return Collections.emptyList();
+        }
 
-    // }
+        var radiusInM = radius * 1000; // metre convert
+
+        var centerLocation = new GeoLocation(latitude, longitude);
+
+        var geoHashQueries = GeoHashQuery.queriesAtLocation(centerLocation, radiusInM);
+
+        var snapshots = new ArrayList<QuerySnapshot>();
+
+        var orderBy = db.collection(Address.ADDRESSES_COLLECTION).orderBy(Address.GEO_HASH);
+
+        for (var geoQuery : geoHashQueries) {
+
+            var query = orderBy
+                .startAt(geoQuery.getStartValue())
+                .endAt(geoQuery.getEndValue());
+
+            snapshots.add(query.get().get());
+        }
+
+        var matchingDocs = new ArrayList<DocumentSnapshot>();
+
+        snapshots.forEach(snapshot -> {
+
+            for (var doc : snapshot.getDocuments()) {
+
+                String latString = doc.getString(Address.LATITUDE);
+                String lngString = doc.getString(Address.LONGITUDE);
+                
+                if(StringUtils.isNoneBlank(latString, lngString)) {
+
+                    double lat = Double.parseDouble(latString);
+                    double lng = Double.parseDouble(lngString);
+                    GeoLocation docLocation = new GeoLocation(lat, lng);
+                    double distance = GeoUtils.distance(docLocation, centerLocation);
+                    if (distance <= radiusInM) {
+                        matchingDocs.add(doc);
+                    }
+
+                }
+            }
+
+        });
+
+        return matchingDocs.stream().map(doc -> doc.toObject(Address.class)).collect(Collectors.toList());
+    }
 
     @SneakyThrows
     public static List<Address> find(String superEntityId, String superCollection) {
