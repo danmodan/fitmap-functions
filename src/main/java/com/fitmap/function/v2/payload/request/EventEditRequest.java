@@ -60,10 +60,6 @@ public class EventEditRequest {
     @PositiveOrZero
     private BigDecimal originalEventValue;
 
-    private String whatsAppContact;
-
-    private String emailContact;
-
     private String contactId;
 
     private Boolean showPhoneContact;
