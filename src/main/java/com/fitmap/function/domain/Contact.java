@@ -27,7 +27,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "is_main_contact" })
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
 public class Contact {

@@ -16,7 +16,6 @@ import com.fitmap.function.domain.SubscriptionPlan;
 import com.fitmap.function.exception.TerminalException;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldPath;
-import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -153,14 +152,9 @@ public class GymService {
         if(StringUtils.isNotBlank(gym.getProfileName())) {
             propsToUpdate.put(Gym.PROFILE_NAME, gym.getProfileName());
         }
-
-        if(gym.getGalleryPicturesUrls().size() > 0) {
-            propsToUpdate.put(Gym.GALLERY_PICTURES_URLS, FieldValue.arrayUnion(gym.getGalleryPicturesUrls().toArray(Object[]::new)));
-        }
-
-        if(gym.getSports().size() > 0) {
-            propsToUpdate.put(Gym.SPORTS, FieldValue.arrayUnion(gym.getSports().toArray(Object[]::new)));
-        }
+        
+        propsToUpdate.put(Gym.GALLERY_PICTURES_URLS, gym.getGalleryPicturesUrls());
+        propsToUpdate.put(Gym.SPORTS, gym.getSports());
 
         docRef.update(propsToUpdate).get();
 
@@ -197,25 +191,6 @@ public class GymService {
 
             throw new TerminalException(e.getMessage(), HttpStatus.CONFLICT);
         }
-    }
-
-    @SneakyThrows
-    public static void removeElementsFromArraysProps(Gym gym) {
-
-        var docRef = db.collection(Gym.GYMS_COLLECTION).document(gym.getId());
-
-        var propsToUpdate = new HashMap<String, Object>();
-        propsToUpdate.put(Gym.UPDATED_AT, new Date());
-
-        if(gym.getGalleryPicturesUrls().size() > 0) {
-            propsToUpdate.put(Gym.GALLERY_PICTURES_URLS, FieldValue.arrayRemove(gym.getGalleryPicturesUrls().toArray(Object[]::new)));
-        }
-
-        if(gym.getSports().size() > 0) {
-            propsToUpdate.put(Gym.SPORTS, FieldValue.arrayRemove(gym.getSports().toArray(Object[]::new)));
-        }
-
-        docRef.update(propsToUpdate).get();
     }
 
 }

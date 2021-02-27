@@ -1,18 +1,17 @@
-package com.fitmap.function.v2.payload.request;
+package com.fitmap.function.v2.payload.response;
 
+import java.util.Date;
 import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fitmap.function.domain.Address;
+import com.fitmap.function.domain.Contact;
+import com.fitmap.function.domain.Event;
+import com.fitmap.function.domain.SubscriptionPlan;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,29 +29,18 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class GymCreateRequest {
+public class GymResponse {
 
-    @Size(max = 2000)
+    private String id;
+    private Date createdAt;
+    private Date updatedAt;
     private String biography;
-
-    @Valid
-    private ContactRequest contact;
-
-    @Valid
-    private AddressRequest address;
-
-    @Valid
-    private List<@NotNull EventCreateRequest> events;
-
-    @Valid
-    private List<@NotNull SubscriptionPlanCreateRequest> subscriptionPlans;
-
-    private List<@NotBlank String> sports;
-
-    private List<@NotBlank String> galleryPicturesUrls;
-
-    @NotEmpty
-    @Size(max = 200)
+    private List<String> galleryPicturesUrls;
+    private List<String> sports;
+    private Contact contact;
+    private Address address;
+    private List<Event> events;
+    private List<SubscriptionPlan> subscriptionPlans;
     private String profileName;
 
 }

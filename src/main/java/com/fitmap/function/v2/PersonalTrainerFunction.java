@@ -4,24 +4,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import com.fitmap.function.domain.Address;
+import com.fitmap.function.domain.Contact;
 import com.fitmap.function.domain.PersonalTrainer;
-import com.fitmap.function.mapper.DomainMapper;
+import com.fitmap.function.exception.TerminalException;
+import com.fitmap.function.mapper.DtoMapper;
+import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
+import com.fitmap.function.service.ContactService;
+import com.fitmap.function.service.PersonalTrainerService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
-import com.fitmap.function.service.PersonalTrainerService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v2.payload.request.AddressCreateRequest;
-import com.fitmap.function.v2.payload.request.ContactCreateRequest;
-import com.fitmap.function.v2.payload.request.EventCreateRequest;
 import com.fitmap.function.v2.payload.request.PersonalTrainerCreateRequest;
 import com.fitmap.function.v2.payload.request.PersonalTrainerEditRequest;
-import com.fitmap.function.v2.payload.request.SubscriptionPlanCreateRequest;
+import com.fitmap.function.v2.payload.response.PersonalTrainerResponse;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.MethodNotAllowedException;
@@ -45,9 +49,6 @@ public class PersonalTrainerFunction {
                 break;
             case PUT:
                 doPut(request, response);
-                break;
-            case DELETE:
-                doDelete(request, response);
                 break;
             default:
                 throw new MethodNotAllowedException(requestMethod, Constants.CRUD_HTTP_METHODS);
@@ -92,85 +93,137 @@ public class PersonalTrainerFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private static void doDelete(HttpRequest request, HttpResponse response) {
-
-        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
-
-        var dto = ReadRequestService.getBody(request, PersonalTrainerEditRequest.class);
-
-        CheckConstraintsRequestBodyService.checkConstraints(dto);
-
-        remove(dto, ReadRequestService.getUserId(request));
-
-        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
-    }
-
     private static void update(PersonalTrainerEditRequest dto, String personalTrainerId) {
 
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+        var found = PersonalTrainerService.find(List.of(personalTrainerId));
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        if(CollectionUtils.isEmpty(found)) {
 
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+            throw new TerminalException("Personal Trainer, " + personalTrainerId + ", does not exists.", HttpStatus.NOT_FOUND);
+        }
 
-        var personalTrainer = DomainMapper.from(dto, personalTrainerId);
+        var current = found.get(0);
 
-        PersonalTrainerService.updateProps(personalTrainer);
+        var toUpdate = DtoMapper.from(dto, personalTrainerId);
+
+        PersonalTrainerService.updateProps(toUpdate);
+
+        updateAddresses(current, toUpdate);
+        updateContacts(current, toUpdate);
     }
 
-    private static void remove(PersonalTrainerEditRequest dto, String personalTrainerId) {
+    private static void updateAddresses(PersonalTrainer current, PersonalTrainer toUpdate) {
 
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+        var personalTrainerId = current.getId();
+        var currentAddresses = current.getAddresses();
+        var toUpdateAddresses = toUpdate.getAddresses();
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        if(toUpdateAddresses.isEmpty() && !currentAddresses.isEmpty()) {
 
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+            var addressesIds = currentAddresses
+                .stream()
+                .map(Address::getId)
+                .collect(Collectors.toList());
 
-        var personalTrainer = DomainMapper.from(dto, personalTrainerId);
+            AddressService.delete(personalTrainerId, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION, addressesIds);
+            return;
+        }
 
-        PersonalTrainerService.removeElementsFromArraysProps(personalTrainer);
+        if(currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+
+            toUpdateAddresses.forEach(a -> a.setMainAddress(true));
+
+            AddressService.create(personalTrainerId, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION, toUpdateAddresses);
+            return;
+        }
+
+        if(!currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+
+            toUpdateAddresses.forEach(a -> {
+                a.setMainAddress(true);
+                a.setId(currentAddresses.get(0).getId());
+            });
+
+            AddressService.edit(personalTrainerId, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION, toUpdateAddresses);
+            return;
+        }
+
     }
 
-    private static PersonalTrainer create(PersonalTrainerCreateRequest dto, String personalTrainerId) {
+    private static void updateContacts(PersonalTrainer current, PersonalTrainer toUpdate) {
 
-        var addresses = Objects.requireNonNullElse(dto.getAddresses(), new ArrayList<AddressCreateRequest>());
+        var personalTrainerId = current.getId();
+        var currentContacts = current.getContacts();
+        var toUpdateContacts = toUpdate.getContacts();
 
-        var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<ContactCreateRequest>());
+        if(toUpdateContacts.isEmpty() && !currentContacts.isEmpty()) {
 
-        var events = Objects.requireNonNullElse(dto.getEvents(), new ArrayList<EventCreateRequest>());
-        events.forEach(event -> {
-            event.setAddressId(null);
-            event.setContactId(null);
+            var contactsIds = currentContacts
+                .stream()
+                .map(Contact::getId)
+                .collect(Collectors.toList());
+
+            ContactService.delete(personalTrainerId, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION, contactsIds);
+            return;
+        }
+
+        if(currentContacts.isEmpty() && !toUpdateContacts.isEmpty()) {
+
+            toUpdateContacts.forEach(c -> c.setMainContact(true));
+
+            ContactService.create(personalTrainerId, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION, toUpdateContacts);
+            return;
+        }
+
+        if(!currentContacts.isEmpty() && !toUpdateContacts.isEmpty()) {
+
+            toUpdateContacts.forEach(c -> {
+                c.setMainContact(true);
+                c.setId(currentContacts.get(0).getId());
+            });
+
+            ContactService.edit(personalTrainerId, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION, toUpdateContacts);
+            return;
+        }
+
+    }
+
+    private static PersonalTrainerResponse create(PersonalTrainerCreateRequest dto, String personalTrainerId) {
+
+        var found = find(List.of(personalTrainerId));
+
+        if(CollectionUtils.isNotEmpty(found)) {
+
+            throw new TerminalException("Personal Trainer, " + personalTrainerId + ", already exists.", HttpStatus.CONFLICT);
+        }
+
+        var personalTrainer = DtoMapper.from(dto, personalTrainerId);
+        personalTrainer.getEvents().forEach(e -> {
+            e.setAddress(null);
+            e.setContact(null);
         });
 
-        var subscriptionPlans = Objects.requireNonNullElse(dto.getSubscriptionPlans(), new ArrayList<SubscriptionPlanCreateRequest>());
+        if(CollectionUtils.isNotEmpty(personalTrainer.getContacts())) {
 
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+            personalTrainer.getContacts().forEach(c -> c.setMainContact(true));
+        }
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        if(CollectionUtils.isNotEmpty(personalTrainer.getAddresses())) {
 
-        dto.setAddresses(addresses);
-        dto.setContacts(contacts);
-        dto.setEvents(events);
-        dto.setSubscriptionPlans(subscriptionPlans);
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+            personalTrainer.getAddresses().forEach(a -> a.setMainAddress(true));
+        }
 
-        var personalTrainer = DomainMapper.from(dto, personalTrainerId);
-
-        return PersonalTrainerService.create(personalTrainer);
+        return DtoMapper.from(PersonalTrainerService.create(personalTrainer));
     }
 
-    private static List<PersonalTrainer> find(List<String> ids) {
+    private static List<PersonalTrainerResponse> find(List<String> ids) {
 
         if(ids.isEmpty()) {
 
             return Collections.emptyList();
         }
 
-        return PersonalTrainerService.find(ids);
+        return DtoMapper.from(PersonalTrainerService.find(ids), DtoMapper::from);
     }
 
 }

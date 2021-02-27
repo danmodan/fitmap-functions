@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fitmap.function.domain.SubscriptionPlan;
-import com.fitmap.function.mapper.DomainMapper;
+import com.fitmap.function.mapper.DtoMapper;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
 import com.fitmap.function.service.SubscriptionPlanService;
@@ -84,7 +84,7 @@ public class SubscriptionPlanFunction {
 
     private static List<SubscriptionPlan> create(List<SubscriptionPlanCreateRequest> dtos, String superEntityId, String superCollection) {
 
-        var subEntities = DomainMapper.from(dtos, DomainMapper::from);
+        var subEntities = DtoMapper.from(dtos, DtoMapper::from);
 
         return SubscriptionPlanService.create(superEntityId, superCollection, subEntities);
     }
@@ -108,7 +108,7 @@ public class SubscriptionPlanFunction {
 
     private static List<SubscriptionPlan> edit(List<SubscriptionPlanEditRequest> dtos, String superEntityId, String superCollection) {
 
-        var subEntities = DomainMapper.from(dtos, DomainMapper::from);
+        var subEntities = DtoMapper.from(dtos, DtoMapper::from);
 
         return SubscriptionPlanService.edit(superEntityId, superCollection, subEntities);
     }

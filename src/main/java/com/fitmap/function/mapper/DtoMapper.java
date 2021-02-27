@@ -16,10 +16,8 @@ import com.fitmap.function.domain.Gym;
 import com.fitmap.function.domain.PersonalTrainer;
 import com.fitmap.function.domain.Student;
 import com.fitmap.function.domain.SubscriptionPlan;
-import com.fitmap.function.v2.payload.request.AddressCreateRequest;
-import com.fitmap.function.v2.payload.request.AddressEditRequest;
-import com.fitmap.function.v2.payload.request.ContactCreateRequest;
-import com.fitmap.function.v2.payload.request.ContactEditRequest;
+import com.fitmap.function.v2.payload.request.AddressRequest;
+import com.fitmap.function.v2.payload.request.ContactRequest;
 import com.fitmap.function.v2.payload.request.EventCreateRequest;
 import com.fitmap.function.v2.payload.request.EventEditRequest;
 import com.fitmap.function.v2.payload.request.GymCreateRequest;
@@ -30,6 +28,9 @@ import com.fitmap.function.v2.payload.request.StudentCreateRequest;
 import com.fitmap.function.v2.payload.request.StudentEditRequest;
 import com.fitmap.function.v2.payload.request.SubscriptionPlanCreateRequest;
 import com.fitmap.function.v2.payload.request.SubscriptionPlanEditRequest;
+import com.fitmap.function.v2.payload.response.GymResponse;
+import com.fitmap.function.v2.payload.response.PersonalTrainerResponse;
+import com.fitmap.function.v2.payload.response.StudentResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,9 +39,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class DomainMapper {
+public class DtoMapper {
 
-    public static <REQUEST_DTO, DOMAIN_MODEL> List<DOMAIN_MODEL> from(Collection<REQUEST_DTO> dtos, Function<REQUEST_DTO, DOMAIN_MODEL> mapper) {
+    public static <T, Q> List<Q> from(Collection<T> dtos, Function<T, Q> mapper) {
 
         if(CollectionUtils.isEmpty(dtos)) {
             return Collections.emptyList();
@@ -53,7 +54,7 @@ public class DomainMapper {
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static Address from(AddressCreateRequest dto) {
+    public static Address from(AddressRequest dto) {
 
         if(dto == null) {
             return null;
@@ -61,52 +62,14 @@ public class DomainMapper {
 
         return Address
             .builder()
-            .zipCode(dto.getZipCode())
-            .publicPlace(dto.getPublicPlace())
-            .complement(dto.getComplement())
-            .district(dto.getDistrict())
-            .city(dto.getCity())
-            .federalUnit(dto.getFederalUnit())
-            .mainAddress(dto.isMainAddress())
+            .addressText(dto.getAddressText())
             .latitude(dto.getLatitude())
             .longitude(dto.getLongitude())
             .geoHash(getGeoHash(dto.getLatitude(), dto.getLongitude()))
             .build();
     }
 
-    public static Address from(AddressEditRequest dto) {
-
-        if(dto == null) {
-            return null;
-        }
-
-        return Address
-            .builder()
-            .id(dto.getId())
-            .zipCode(dto.getZipCode())
-            .publicPlace(dto.getPublicPlace())
-            .complement(dto.getComplement())
-            .district(dto.getDistrict())
-            .city(dto.getCity())
-            .federalUnit(dto.getFederalUnit())
-            .mainAddress(dto.isMainAddress())
-            .latitude(dto.getLatitude())
-            .longitude(dto.getLongitude())
-            .geoHash(getGeoHash(dto.getLatitude(), dto.getLongitude()))
-            .build();
-    }
-
-    private static String getGeoHash(String latitude, String longitude) {
-
-        if(StringUtils.isAnyBlank(latitude, longitude)) {
-
-            return null;
-        }
-
-        return new GeoHash(Double.parseDouble(latitude), Double.parseDouble(longitude)).getGeoHashString();
-    }
-
-    public static Contact from(ContactCreateRequest dto) {
+    public static Contact from(ContactRequest dto) {
 
         if(dto == null) {
             return null;
@@ -119,25 +82,6 @@ public class DomainMapper {
             .phone(dto.getPhone())
             .whatsapp(dto.getWhatsapp())
             .instagram(dto.getInstagram())
-            .mainContact(dto.isMainContact())
-            .build();
-    }
-
-    public static Contact from(ContactEditRequest dto) {
-
-        if(dto == null) {
-            return null;
-        }
-
-        return Contact
-            .builder()
-            .id(dto.getId())
-            .name(dto.getName())
-            .email(dto.getEmail())
-            .phone(dto.getPhone())
-            .whatsapp(dto.getWhatsapp())
-            .instagram(dto.getInstagram())
-            .mainContact(dto.isMainContact())
             .build();
     }
 
@@ -199,9 +143,9 @@ public class DomainMapper {
         return Student
             .builder()
             .id(studentId)
-            .contacts(DomainMapper.from(dto.getContacts(), DomainMapper::from))
-            .addresses(DomainMapper.from(dto.getAddresses(), DomainMapper::from))
-            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
+            .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
+            .galleryPicturesUrls(Objects.requireNonNullElse(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()), Collections.emptyList()))
             .profileName(dto.getProfileName())
             .build();
     }
@@ -215,8 +159,28 @@ public class DomainMapper {
         return Student
             .builder()
             .id(studentId)
-            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .galleryPicturesUrls(Objects.requireNonNullElse(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()), Collections.emptyList()))
             .profileName(dto.getProfileName())
+            .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
+            .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
+            .build();
+    }
+
+    public static StudentResponse from(Student model) {
+
+        if(model == null) {
+            return null;
+        }
+
+        return StudentResponse
+            .builder()
+            .id(model.getId())
+            .createdAt(model.getCreatedAt())
+            .updatedAt(model.getUpdatedAt())
+            .galleryPicturesUrls(Objects.requireNonNullElse(model.getGalleryPicturesUrls(), Collections.emptyList()))
+            .contact(getFirstIfAny(model.getContacts()))
+            .address(getFirstIfAny(model.getAddresses()))
+            .profileName(model.getProfileName())
             .build();
     }
 
@@ -260,13 +224,13 @@ public class DomainMapper {
         return Gym
             .builder()
             .id(gymId)
-            .contacts(DomainMapper.from(dto.getContacts(), DomainMapper::from))
-            .addresses(DomainMapper.from(dto.getAddresses(), DomainMapper::from))
-            .events(DomainMapper.from(dto.getEvents(), DomainMapper::from))
-            .subscriptionPlans(DomainMapper.from(dto.getSubscriptionPlans(), DomainMapper::from))
+            .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
+            .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
+            .events(from(dto.getEvents(), DtoMapper::from))
+            .subscriptionPlans(from(dto.getSubscriptionPlans(), DtoMapper::from))
             .biography(dto.getBiography())
-            .sports(dto.getSports())
-            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .sports(Objects.requireNonNullElse(dto.getSports(), Collections.emptyList()))
+            .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .profileName(dto.getProfileName())
             .build();
     }
@@ -281,9 +245,33 @@ public class DomainMapper {
             .builder()
             .id(gymId)
             .biography(dto.getBiography())
-            .sports(dto.getSports())
-            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .sports(Objects.requireNonNullElse(dto.getSports(), Collections.emptyList()))
+            .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .profileName(dto.getProfileName())
+            .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
+            .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
+            .build();
+    }
+
+    public static GymResponse from(Gym model) {
+
+        if(model == null) {
+            return null;
+        }
+
+        return GymResponse
+            .builder()
+            .id(model.getId())
+            .createdAt(model.getCreatedAt())
+            .updatedAt(model.getUpdatedAt())
+            .biography(model.getBiography())
+            .galleryPicturesUrls(model.getGalleryPicturesUrls())
+            .sports(model.getSports())
+            .contact(getFirstIfAny(model.getContacts()))
+            .address(getFirstIfAny(model.getAddresses()))
+            .events(model.getEvents())
+            .subscriptionPlans(model.getSubscriptionPlans())
+            .profileName(model.getProfileName())
             .build();
     }
 
@@ -296,13 +284,13 @@ public class DomainMapper {
         return PersonalTrainer
             .builder()
             .id(id)
-            .contacts(DomainMapper.from(dto.getContacts(), DomainMapper::from))
-            .addresses(DomainMapper.from(dto.getAddresses(), DomainMapper::from))
-            .events(DomainMapper.from(dto.getEvents(), DomainMapper::from))
-            .subscriptionPlans(DomainMapper.from(dto.getSubscriptionPlans(), DomainMapper::from))
+            .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
+            .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
+            .events(from(dto.getEvents(), DtoMapper::from))
+            .subscriptionPlans(from(dto.getSubscriptionPlans(), DtoMapper::from))
             .biography(dto.getBiography())
-            .sports(dto.getSports())
-            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .sports(Objects.requireNonNullElse(dto.getSports(), Collections.emptyList()))
+            .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .busySchedule(dto.getBusySchedule())
             .onlineService(dto.getOnlineService())
             .homeService(dto.getHomeService())
@@ -320,13 +308,64 @@ public class DomainMapper {
             .builder()
             .id(id)
             .biography(dto.getBiography())
-            .sports(dto.getSports())
-            .galleryPicturesUrls(dto.getGalleryPicturesUrls())
+            .sports(Objects.requireNonNullElse(dto.getSports(), Collections.emptyList()))
+            .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .busySchedule(dto.getBusySchedule())
             .onlineService(dto.getOnlineService())
             .homeService(dto.getHomeService())
             .profileName(dto.getProfileName())
+            .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
+            .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
             .build();
+    }
+
+    public static PersonalTrainerResponse from(PersonalTrainer model) {
+
+        if(model == null) {
+            return null;
+        }
+
+        return PersonalTrainerResponse
+            .builder()
+            .id(model.getId())
+            .createdAt(model.getCreatedAt())
+            .updatedAt(model.getUpdatedAt())
+            .biography(model.getBiography())
+            .galleryPicturesUrls(model.getGalleryPicturesUrls())
+            .sports(model.getSports())
+            .contact(getFirstIfAny(model.getContacts()))
+            .address(getFirstIfAny(model.getAddresses()))
+            .events(model.getEvents())
+            .subscriptionPlans(model.getSubscriptionPlans())
+            .profileName(model.getProfileName())
+            .busySchedule(model.getBusySchedule())
+            .onlineService(model.getOnlineService())
+            .homeService(model.getHomeService())
+            .build();
+    }
+
+    private static <T> T getFirstIfAny(List<T> col) {
+
+        return CollectionUtils.isEmpty(col) ? null : col.get(0);
+    }
+
+    private static <T> List<T> createOneElementList(T t) {
+
+        if(t == null) {
+            return Collections.emptyList();
+        }
+
+        return List.of(t);
+    }
+
+    private static String getGeoHash(String latitude, String longitude) {
+
+        if(StringUtils.isAnyBlank(latitude, longitude)) {
+
+            return null;
+        }
+
+        return new GeoHash(Double.parseDouble(latitude), Double.parseDouble(longitude)).getGeoHashString();
     }
 
 }

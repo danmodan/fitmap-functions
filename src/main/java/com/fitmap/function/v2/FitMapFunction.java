@@ -8,7 +8,6 @@ import javax.validation.ConstraintViolationException;
 import com.fitmap.function.config.SystemTimeZoneConfig;
 import com.fitmap.function.domain.Gym;
 import com.fitmap.function.domain.PersonalTrainer;
-import com.fitmap.function.domain.Student;
 import com.fitmap.function.exception.TerminalException;
 import com.fitmap.function.service.ResponseService;
 import com.google.cloud.functions.HttpFunction;
@@ -49,12 +48,6 @@ public class FitMapFunction implements HttpFunction {
                 case "/api/v2/gym":
                     GymFunction.service(request, response);
                     break;
-                case "/api/v2/gym/contacts":
-                    ContactFunction.service(request, response, Gym.GYMS_COLLECTION);
-                    break;
-                case "/api/v2/gym/addresses":
-                    AddressFunction.service(request, response, Gym.GYMS_COLLECTION);
-                    break;
                 case "/api/v2/gym/events":
                     EventFunction.service(request, response, Gym.GYMS_COLLECTION);
                     break;
@@ -64,12 +57,6 @@ public class FitMapFunction implements HttpFunction {
                 case "/api/v2/personal-trainer":
                     PersonalTrainerFunction.service(request, response);
                     break;
-                case "/api/v2/personal-trainer/contacts":
-                    ContactFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
-                    break;
-                case "/api/v2/personal-trainer/addresses":
-                    AddressFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
-                    break;
                 case "/api/v2/personal-trainer/events":
                     EventFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
@@ -78,12 +65,6 @@ public class FitMapFunction implements HttpFunction {
                     break;
                 case "/api/v2/student":
                     StudentFunction.service(request, response);
-                    break;
-                case "/api/v2/student/contacts":
-                    ContactFunction.service(request, response, Student.STUDENTS_COLLECTION);
-                    break;
-                case "/api/v2/student/addresses":
-                    AddressFunction.service(request, response, Student.STUDENTS_COLLECTION);
                     break;
                 case "/api/v2/sport":
                     SportFunction.service(request, response);

@@ -20,6 +20,10 @@ public class CheckConstraintsRequestBodyService {
 
     public static <T> void checkConstraints(T body) {
 
+        if(body == null) {
+            throw new TerminalException("Request body cannot be null.", HttpStatus.BAD_REQUEST);
+        }
+
         var violations = ValidatorConfig.VALIDATOR.validate(body);
 
         if (CollectionUtils.isEmpty(violations)) {

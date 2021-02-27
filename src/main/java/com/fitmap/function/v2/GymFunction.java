@@ -4,24 +4,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import com.fitmap.function.domain.Address;
+import com.fitmap.function.domain.Contact;
 import com.fitmap.function.domain.Gym;
-import com.fitmap.function.mapper.DomainMapper;
+import com.fitmap.function.exception.TerminalException;
+import com.fitmap.function.mapper.DtoMapper;
+import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
+import com.fitmap.function.service.ContactService;
+import com.fitmap.function.service.GymService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
-import com.fitmap.function.service.GymService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v2.payload.request.AddressCreateRequest;
-import com.fitmap.function.v2.payload.request.ContactCreateRequest;
-import com.fitmap.function.v2.payload.request.EventCreateRequest;
 import com.fitmap.function.v2.payload.request.GymCreateRequest;
 import com.fitmap.function.v2.payload.request.GymEditRequest;
-import com.fitmap.function.v2.payload.request.SubscriptionPlanCreateRequest;
+import com.fitmap.function.v2.payload.response.GymResponse;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.MethodNotAllowedException;
@@ -45,9 +49,6 @@ public class GymFunction {
                 break;
             case PUT:
                 doPut(request, response);
-                break;
-            case DELETE:
-                doDelete(request, response);
                 break;
             default:
                 throw new MethodNotAllowedException(requestMethod, Constants.CRUD_HTTP_METHODS);
@@ -92,85 +93,137 @@ public class GymFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private static void doDelete(HttpRequest request, HttpResponse response) {
-
-        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
-
-        var dto = ReadRequestService.getBody(request, GymEditRequest.class);
-
-        CheckConstraintsRequestBodyService.checkConstraints(dto);
-
-        remove(dto, ReadRequestService.getUserId(request));
-
-        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
-    }
-
     private static void update(GymEditRequest dto, String gymId) {
 
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+        var found = GymService.find(List.of(gymId));
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        if(CollectionUtils.isEmpty(found)) {
 
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+            throw new TerminalException("Gym, " + gymId + ", does not exists.", HttpStatus.NOT_FOUND);
+        }
 
-        var gym = DomainMapper.from(dto, gymId);
+        var current = found.get(0);
 
-        GymService.updateProps(gym);
+        var toUpdate = DtoMapper.from(dto, gymId);
+
+        GymService.updateProps(toUpdate);
+
+        updateAddresses(current, toUpdate);
+        updateContacts(current, toUpdate);
     }
 
-    private static void remove(GymEditRequest dto, String gymId) {
+    private static void updateAddresses(Gym current, Gym toUpdate) {
 
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+        var gymId = current.getId();
+        var currentAddresses = current.getAddresses();
+        var toUpdateAddresses = toUpdate.getAddresses();
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        if(toUpdateAddresses.isEmpty() && !currentAddresses.isEmpty()) {
 
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+            var addressesIds = currentAddresses
+                .stream()
+                .map(Address::getId)
+                .collect(Collectors.toList());
 
-        var gym = DomainMapper.from(dto, gymId);
+            AddressService.delete(gymId, Gym.GYMS_COLLECTION, addressesIds);
+            return;
+        }
 
-        GymService.removeElementsFromArraysProps(gym);
+        if(currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+
+            toUpdateAddresses.forEach(a -> a.setMainAddress(true));
+
+            AddressService.create(gymId, Gym.GYMS_COLLECTION, toUpdateAddresses);
+            return;
+        }
+
+        if(!currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+
+            toUpdateAddresses.forEach(a -> {
+                a.setMainAddress(true);
+                a.setId(currentAddresses.get(0).getId());
+            });
+
+            AddressService.edit(gymId, Gym.GYMS_COLLECTION, toUpdateAddresses);
+            return;
+        }
+
     }
 
-    private static Gym create(GymCreateRequest dto, String gymId) {
+    private static void updateContacts(Gym current, Gym toUpdate) {
 
-        var addresses = Objects.requireNonNullElse(dto.getAddresses(), new ArrayList<AddressCreateRequest>());
+        var gymId = current.getId();
+        var currentContacts = current.getContacts();
+        var toUpdateContacts = toUpdate.getContacts();
 
-        var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<ContactCreateRequest>());
+        if(toUpdateContacts.isEmpty() && !currentContacts.isEmpty()) {
 
-        var events = Objects.requireNonNullElse(dto.getEvents(), new ArrayList<EventCreateRequest>());
-        events.forEach(event -> {
-            event.setAddressId(null);
-            event.setContactId(null);
+            var contactsIds = currentContacts
+                .stream()
+                .map(Contact::getId)
+                .collect(Collectors.toList());
+
+            ContactService.delete(gymId, Gym.GYMS_COLLECTION, contactsIds);
+            return;
+        }
+
+        if(currentContacts.isEmpty() && !toUpdateContacts.isEmpty()) {
+
+            toUpdateContacts.forEach(c -> c.setMainContact(true));
+
+            ContactService.create(gymId, Gym.GYMS_COLLECTION, toUpdateContacts);
+            return;
+        }
+
+        if(!currentContacts.isEmpty() && !toUpdateContacts.isEmpty()) {
+
+            toUpdateContacts.forEach(c -> {
+                c.setMainContact(true);
+                c.setId(currentContacts.get(0).getId());
+            });
+
+            ContactService.edit(gymId, Gym.GYMS_COLLECTION, toUpdateContacts);
+            return;
+        }
+
+    }
+
+    private static GymResponse create(GymCreateRequest dto, String gymId) {
+
+        var found = find(List.of(gymId));
+
+        if(CollectionUtils.isNotEmpty(found)) {
+
+            throw new TerminalException("Gym, " + gymId + ", already exists.", HttpStatus.CONFLICT);
+        }
+
+        var gym = DtoMapper.from(dto, gymId);
+        gym.getEvents().forEach(e -> {
+            e.setAddress(null);
+            e.setContact(null);
         });
 
-        var subscriptionPlans = Objects.requireNonNullElse(dto.getSubscriptionPlans(), new ArrayList<SubscriptionPlanCreateRequest>());
+        if(CollectionUtils.isNotEmpty(gym.getContacts())) {
 
-        var sports = Objects.requireNonNullElse(dto.getSports(), new ArrayList<String>());
+            gym.getContacts().forEach(c -> c.setMainContact(true));
+        }
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        if(CollectionUtils.isNotEmpty(gym.getAddresses())) {
 
-        dto.setAddresses(addresses);
-        dto.setContacts(contacts);
-        dto.setEvents(events);
-        dto.setSubscriptionPlans(subscriptionPlans);
-        dto.setSports(sports);
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+            gym.getAddresses().forEach(a -> a.setMainAddress(true));
+        }
 
-        var gym = DomainMapper.from(dto, gymId);
-
-        return GymService.create(gym);
+        return DtoMapper.from(GymService.create(gym));
     }
 
-    private static List<Gym> find(List<String> ids) {
+    private static List<GymResponse> find(List<String> ids) {
 
         if(ids.isEmpty()) {
 
-            return Collections.emptyList();
+            Collections.emptyList();
         }
 
-        return GymService.find(ids);
+        return DtoMapper.from(GymService.find(ids), DtoMapper::from);
     }
 
 }

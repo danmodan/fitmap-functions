@@ -3,19 +3,15 @@ package com.fitmap.function.v2.payload.request;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,47 +32,15 @@ import lombok.ToString;
 public class StudentCreateRequest {
 
     @Valid
-    private List<@NotNull ContactCreateRequest> contacts;
+    private ContactRequest contact;
 
     @Valid
-    private List<@NotNull AddressCreateRequest> addresses;
+    private AddressRequest address;
 
     private List<@NotBlank String> galleryPicturesUrls;
 
     @NotEmpty
     @Size(max = 200)
     private String profileName;
-
-    @JsonIgnore
-    @AssertTrue(message = "Cannot exist more than one main Contact.")
-    public boolean isValidContacts() {
-
-        try {
-
-            CheckConstraintsRequestBodyService.checkOnlyOneMainElement(contacts, ContactCreateRequest::isMainContact);
-
-            return true;
-
-        } catch (Exception e) {
-
-            return false;
-        }
-    }
-
-    @JsonIgnore
-    @AssertTrue(message = "Cannot exist more than one main Address.")
-    public boolean isValidAddresses() {
-
-        try {
-
-            CheckConstraintsRequestBodyService.checkOnlyOneMainElement(addresses, AddressCreateRequest::isMainAddress);
-
-            return true;
-
-        } catch (Exception e) {
-
-            return false;
-        }
-    }
 
 }

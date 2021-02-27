@@ -4,22 +4,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import com.fitmap.function.domain.Address;
+import com.fitmap.function.domain.Contact;
 import com.fitmap.function.domain.Student;
-import com.fitmap.function.mapper.DomainMapper;
+import com.fitmap.function.exception.TerminalException;
+import com.fitmap.function.mapper.DtoMapper;
+import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
+import com.fitmap.function.service.ContactService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.service.StudentService;
 import com.fitmap.function.util.Constants;
-import com.fitmap.function.v2.payload.request.AddressCreateRequest;
-import com.fitmap.function.v2.payload.request.ContactCreateRequest;
 import com.fitmap.function.v2.payload.request.StudentCreateRequest;
 import com.fitmap.function.v2.payload.request.StudentEditRequest;
+import com.fitmap.function.v2.payload.response.StudentResponse;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.MethodNotAllowedException;
@@ -43,9 +49,6 @@ public class StudentFunction {
                 break;
             case PUT:
                 doPut(request, response);
-                break;
-            case DELETE:
-                doDelete(request, response);
                 break;
             default:
                 throw new MethodNotAllowedException(requestMethod, Constants.CRUD_HTTP_METHODS);
@@ -90,63 +93,134 @@ public class StudentFunction {
         ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
-    private static void doDelete(HttpRequest request, HttpResponse response) {
-
-        CheckRequestContentTypeService.checkApplicationJsonContentType(request);
-
-        var dto = ReadRequestService.getBody(request, StudentEditRequest.class);
-
-        CheckConstraintsRequestBodyService.checkConstraints(dto);
-
-        remove(dto, ReadRequestService.getUserId(request));
-
-        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
-    }
-
     private static void update(StudentEditRequest dto, String studentId) {
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        var found = StudentService.find(List.of(studentId));
 
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+        if(CollectionUtils.isEmpty(found)) {
 
-        var student = DomainMapper.from(dto, studentId);
+            throw new TerminalException("Student, " + studentId + ", does not exists.", HttpStatus.NOT_FOUND);
+        }
 
-        StudentService.updateProps(student);
+        var current = found.get(0);
+
+        var toUpdate = DtoMapper.from(dto, studentId);
+
+        StudentService.updateProps(toUpdate);
+
+        updateAddresses(current, toUpdate);
+        updateContacts(current, toUpdate);
+
     }
 
-    private static void remove(StudentEditRequest dto, String studentId) {
+    private static void updateAddresses(Student current, Student toUpdate) {
 
-        var galleryPicturesUrls = Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), new ArrayList<String>());
+        var studentId = current.getId();
+        var currentAddresses = current.getAddresses();
+        var toUpdateAddresses = toUpdate.getAddresses();
 
-        dto.setGalleryPicturesUrls(galleryPicturesUrls);
+        if(toUpdateAddresses.isEmpty() && !currentAddresses.isEmpty()) {
 
-        var student = DomainMapper.from(dto, studentId);
+            var addressesIds = currentAddresses
+                .stream()
+                .map(Address::getId)
+                .collect(Collectors.toList());
 
-        StudentService.removeElementsFromArraysProps(student);
+            AddressService.delete(studentId, Student.STUDENTS_COLLECTION, addressesIds);
+            return;
+        }
+
+        if(currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+
+            toUpdateAddresses.forEach(a -> a.setMainAddress(true));
+
+            AddressService.create(studentId, Student.STUDENTS_COLLECTION, toUpdateAddresses);
+            return;
+        }
+
+        if(!currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+
+            toUpdateAddresses.forEach(a -> {
+                a.setMainAddress(true);
+                a.setId(currentAddresses.get(0).getId());
+            });
+
+            AddressService.edit(studentId, Student.STUDENTS_COLLECTION, toUpdateAddresses);
+            return;
+        }
+
     }
 
-    private static Student create(StudentCreateRequest dto, String studentId) {
+    private static void updateContacts(Student current, Student toUpdate) {
 
-        var addresses = Objects.requireNonNullElse(dto.getAddresses(), new ArrayList<AddressCreateRequest>());
+        var studentId = current.getId();
+        var currentContacts = current.getContacts();
+        var toUpdateContacts = toUpdate.getContacts();
 
-        var contacts = Objects.requireNonNullElse(dto.getContacts(), new ArrayList<ContactCreateRequest>());
+        if(toUpdateContacts.isEmpty() && !currentContacts.isEmpty()) {
 
-        dto.setAddresses(addresses);
-        dto.setContacts(contacts);
+            var contactsIds = currentContacts
+                .stream()
+                .map(Contact::getId)
+                .collect(Collectors.toList());
 
-        var student = DomainMapper.from(dto, studentId);
+            ContactService.delete(studentId, Student.STUDENTS_COLLECTION, contactsIds);
+            return;
+        }
 
-        return StudentService.create(student);
+        if(currentContacts.isEmpty() && !toUpdateContacts.isEmpty()) {
+
+            toUpdateContacts.forEach(c -> c.setMainContact(true));
+
+            ContactService.create(studentId, Student.STUDENTS_COLLECTION, toUpdateContacts);
+            return;
+        }
+
+        if(!currentContacts.isEmpty() && !toUpdateContacts.isEmpty()) {
+
+            toUpdateContacts.forEach(c -> {
+                c.setMainContact(true);
+                c.setId(currentContacts.get(0).getId());
+            });
+
+            ContactService.edit(studentId, Student.STUDENTS_COLLECTION, toUpdateContacts);
+            return;
+        }
+
     }
 
-    private static List<Student> find(List<String> ids) {
+    private static StudentResponse create(StudentCreateRequest dto, String studentId) {
+
+        var found = find(List.of(studentId));
+
+        if(CollectionUtils.isNotEmpty(found)) {
+
+            throw new TerminalException("Student, " + studentId + ", already exists.", HttpStatus.CONFLICT);
+        }
+
+        var student = DtoMapper.from(dto, studentId);
+
+        if(CollectionUtils.isNotEmpty(student.getContacts())) {
+
+            student.getContacts().forEach(c -> c.setMainContact(true));
+        }
+
+        if(CollectionUtils.isNotEmpty(student.getAddresses())) {
+
+            student.getAddresses().forEach(a -> a.setMainAddress(true));
+        }
+
+        return DtoMapper.from(StudentService.create(student));
+    }
+
+    private static List<StudentResponse> find(List<String> ids) {
 
         if(ids.isEmpty()) {
 
             return Collections.emptyList();
         }
 
-        return StudentService.find(ids);
+        return DtoMapper.from(StudentService.find(ids), DtoMapper::from);
     }
 
 }

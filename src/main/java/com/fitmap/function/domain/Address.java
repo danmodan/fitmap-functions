@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,19 +29,14 @@ import lombok.With;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "is_main_address" })
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
 public class Address {
 
     public static final String ADDRESSES_COLLECTION = "addresses_v2";
     public static final String ID = "id";
-    public static final String ZIP_CODE = "zipCode";
-    public static final String PUBLIC_PLACE = "publicPlace";
-    public static final String COMPLEMENT = "complement";
-    public static final String DISTRICT = "district";
-    public static final String CITY = "city";
-    public static final String FEDERAL_UNIT = "federalUnit";
+    public static final String ADDRESS_TEXT = "addressText";
     public static final String MAIN_ADDRESS = "mainAddress";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
@@ -55,23 +49,7 @@ public class Address {
     @NotBlank
     private String id;
 
-    @Size(max = 50)
-    private String zipCode;
-
-    @Size(max = 300)
-    private String publicPlace;
-
-    @Size(max = 300)
-    private String complement;
-
-    @Size(max = 300)
-    private String district;
-
-    @Size(max = 300)
-    private String city;
-
-    @Size(max = 300)
-    private String federalUnit;
+    private String addressText;
 
     @JsonProperty(value = "is_main_address")
     private boolean mainAddress;
@@ -146,12 +124,7 @@ public class Address {
         var fields = new HashMap<String, Object>();
 
         fields.put(ID, id);
-        fields.put(ZIP_CODE, zipCode);
-        fields.put(PUBLIC_PLACE, publicPlace);
-        fields.put(COMPLEMENT, complement);
-        fields.put(DISTRICT, district);
-        fields.put(CITY, city);
-        fields.put(FEDERAL_UNIT, federalUnit);
+        fields.put(ADDRESS_TEXT, addressText);
         fields.put(MAIN_ADDRESS, mainAddress);
         fields.put(LATITUDE, latitude);
         fields.put(LONGITUDE, longitude);

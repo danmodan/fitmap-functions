@@ -26,7 +26,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class ContactCreateRequest {
+public class ContactRequest {
 
     @Size(max = 500)
     private String name;
@@ -43,8 +43,5 @@ public class ContactCreateRequest {
 
     @Size(max = 400)
     private String instagram;
-
-    @JsonProperty(value = "is_main_contact")
-    private boolean mainContact;
 
 }

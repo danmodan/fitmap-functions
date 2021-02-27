@@ -16,7 +16,6 @@ import com.fitmap.function.domain.SubscriptionPlan;
 import com.fitmap.function.exception.TerminalException;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldPath;
-import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -154,13 +153,8 @@ public class PersonalTrainerService {
             propsToUpdate.put(PersonalTrainer.PROFILE_NAME, personalTrainer.getProfileName());
         }
 
-        if(personalTrainer.getGalleryPicturesUrls().size() > 0) {
-            propsToUpdate.put(PersonalTrainer.GALLERY_PICTURES_URLS, FieldValue.arrayUnion(personalTrainer.getGalleryPicturesUrls().toArray(Object[]::new)));
-        }
-
-        if(personalTrainer.getSports().size() > 0) {
-            propsToUpdate.put(PersonalTrainer.SPORTS, FieldValue.arrayUnion(personalTrainer.getSports().toArray(Object[]::new)));
-        }
+        propsToUpdate.put(PersonalTrainer.GALLERY_PICTURES_URLS, personalTrainer.getGalleryPicturesUrls());
+        propsToUpdate.put(PersonalTrainer.SPORTS, personalTrainer.getSports());
 
         if(personalTrainer.getOnlineService() != null) {
             propsToUpdate.put(PersonalTrainer.ONLINE_SERVICE, personalTrainer.getOnlineService());
@@ -209,25 +203,6 @@ public class PersonalTrainerService {
 
             throw new TerminalException(e.getMessage(), HttpStatus.CONFLICT);
         }
-    }
-
-    @SneakyThrows
-    public static void removeElementsFromArraysProps(PersonalTrainer personalTrainer) {
-
-        var docRef = db.collection(PersonalTrainer.PERSONAL_TRAINERS_COLLECTION).document(personalTrainer.getId());
-
-        var propsToUpdate = new HashMap<String, Object>();
-        propsToUpdate.put(PersonalTrainer.UPDATED_AT, new Date());
-
-        if(personalTrainer.getGalleryPicturesUrls().size() > 0) {
-            propsToUpdate.put(PersonalTrainer.GALLERY_PICTURES_URLS, FieldValue.arrayRemove(personalTrainer.getGalleryPicturesUrls().toArray(Object[]::new)));
-        }
-
-        if(personalTrainer.getSports().size() > 0) {
-            propsToUpdate.put(PersonalTrainer.SPORTS, FieldValue.arrayRemove(personalTrainer.getSports().toArray(Object[]::new)));
-        }
-
-        docRef.update(propsToUpdate).get();
     }
 
 }

@@ -1,11 +1,7 @@
-package com.fitmap.function.v2.payload.request;
+package com.fitmap.function.v2.payload.response;
 
+import java.util.Date;
 import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,6 +9,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fitmap.function.domain.Address;
+import com.fitmap.function.domain.Contact;
+import com.fitmap.function.domain.Event;
+import com.fitmap.function.domain.SubscriptionPlan;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,14 +30,19 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class PersonalTrainerEditRequest {
+public class PersonalTrainerResponse {
 
-    @Size(max = 2000)
+    private String id;
+    private Date createdAt;
+    private Date updatedAt;
     private String biography;
-
-    private List<@NotBlank String> sports;
-
-    private List<@NotBlank String> galleryPicturesUrls;
+    private List<String> galleryPicturesUrls;
+    private List<String> sports;
+    private Contact contact;
+    private Address address;
+    private List<Event> events;
+    private List<SubscriptionPlan> subscriptionPlans;
+    private String profileName;
 
     @JsonProperty(value = "is_busy_schedule")
     private Boolean busySchedule;
@@ -47,15 +52,5 @@ public class PersonalTrainerEditRequest {
 
     @JsonProperty(value = "has_home_service")
     private Boolean homeService;
-
-    @NotEmpty
-    @Size(max = 200)
-    private String profileName;
-
-    @Valid
-    private ContactRequest contact;
-
-    @Valid
-    private AddressRequest address;
 
 }

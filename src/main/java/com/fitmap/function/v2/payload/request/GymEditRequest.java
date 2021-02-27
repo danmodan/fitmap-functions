@@ -2,6 +2,7 @@ package com.fitmap.function.v2.payload.request;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -40,5 +41,11 @@ public class GymEditRequest {
     @NotEmpty
     @Size(max = 200)
     private String profileName;
+
+    @Valid
+    private ContactRequest contact;
+
+    @Valid
+    private AddressRequest address;
 
 }

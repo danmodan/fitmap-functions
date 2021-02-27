@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fitmap.function.domain.Event;
-import com.fitmap.function.mapper.DomainMapper;
+import com.fitmap.function.mapper.DtoMapper;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
 import com.fitmap.function.service.EventService;
@@ -84,7 +84,7 @@ public class EventFunction {
 
     private static List<Event> create(List<EventCreateRequest> dtos, String superEntityId, String superCollection) {
 
-        var subEntities = DomainMapper.from(dtos, DomainMapper::from);
+        var subEntities = DtoMapper.from(dtos, DtoMapper::from);
 
         return EventService.create(superEntityId, superCollection, subEntities);
     }
@@ -108,7 +108,7 @@ public class EventFunction {
 
     private static List<Event> edit(List<EventEditRequest> dtos, String superEntityId, String superCollection) {
 
-        var subEntities = DomainMapper.from(dtos, DomainMapper::from);
+        var subEntities = DtoMapper.from(dtos, DtoMapper::from);
 
         return EventService.edit(superEntityId, superCollection, subEntities);
     }

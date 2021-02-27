@@ -1,15 +1,15 @@
-package com.fitmap.function.v2.payload.request;
+package com.fitmap.function.v2.payload.response;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fitmap.function.domain.Address;
+import com.fitmap.function.domain.Contact;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,28 +27,14 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class ContactEditRequest {
+public class StudentResponse {
 
-    @NotBlank
     private String id;
-
-    @Size(max = 500)
-    private String name;
-
-    @Email
-    @Size(max = 500)
-    private String email;
-
-    @Size(max = 50)
-    private String phone;
-
-    @JsonProperty(value = "is_whatsapp")
-    private Boolean whatsapp;
-
-    @Size(max = 400)
-    private String instagram;
-
-    @JsonProperty(value = "is_main_contact")
-    private boolean mainContact;
+    private Date createdAt;
+    private Date updatedAt;
+    private List<String> galleryPicturesUrls;
+    private Contact contact;
+    private Address address;
+    private String profileName;
 
 }

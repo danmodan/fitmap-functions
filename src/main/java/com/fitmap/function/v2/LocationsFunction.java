@@ -1,5 +1,7 @@
 package com.fitmap.function.v2;
 
+import java.util.Objects;
+
 import com.fitmap.function.exception.TerminalException;
 import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
@@ -40,6 +42,34 @@ public class LocationsFunction {
         var radius = Double.parseDouble(radiusOpt.get());
 
         var found = AddressService.findAddressesNearBy(latitude, longitude, radius);
+
+        found
+            .stream()
+            .filter(Objects::nonNull)
+            .forEach(a -> {
+
+                if(a.getGym() != null) {
+                    a.getGym().setAddresses(null);
+                    a.getGym().setContacts(null);
+                    a.getGym().setEvents(null);
+                    a.getGym().setSubscriptionPlans(null);
+                    return;
+                }
+
+                if(a.getPersonalTrainer() != null) {
+                    a.getPersonalTrainer().setAddresses(null);
+                    a.getPersonalTrainer().setContacts(null);
+                    a.getPersonalTrainer().setEvents(null);
+                    a.getPersonalTrainer().setSubscriptionPlans(null);
+                    return;
+                }
+
+                if(a.getStudent() != null) {
+                    a.getStudent().setAddresses(null);
+                    a.getStudent().setContacts(null);
+                    return;
+                }
+        });
 
         ResponseService.writeResponse(response, found);
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
