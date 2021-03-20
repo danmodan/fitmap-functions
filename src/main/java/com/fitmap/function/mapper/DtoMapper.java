@@ -145,7 +145,7 @@ public class DtoMapper {
             .id(studentId)
             .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
             .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))
-            .galleryPicturesUrls(Objects.requireNonNullElse(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()), Collections.emptyList()))
+            .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .profileName(dto.getProfileName())
             .build();
     }
@@ -159,7 +159,7 @@ public class DtoMapper {
         return Student
             .builder()
             .id(studentId)
-            .galleryPicturesUrls(Objects.requireNonNullElse(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()), Collections.emptyList()))
+            .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .profileName(dto.getProfileName())
             .contacts(from(createOneElementList(dto.getContact()), DtoMapper::from))
             .addresses(from(createOneElementList(dto.getAddress()), DtoMapper::from))

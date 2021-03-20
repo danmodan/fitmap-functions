@@ -130,9 +130,7 @@ public class StudentService {
             propsToUpdate.put(Student.PROFILE_NAME, student.getProfileName());
         }
 
-        if(student.getGalleryPicturesUrls().size() > 0) {
-            propsToUpdate.put(Student.GALLERY_PICTURES_URLS, FieldValue.arrayUnion(student.getGalleryPicturesUrls().toArray(Object[]::new)));
-        }
+        propsToUpdate.put(Student.GALLERY_PICTURES_URLS, student.getGalleryPicturesUrls());
 
         docRef.update(propsToUpdate).get();
 
