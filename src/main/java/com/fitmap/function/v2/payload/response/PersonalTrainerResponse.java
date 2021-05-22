@@ -38,6 +38,7 @@ public class PersonalTrainerResponse {
     private String biography;
     private List<String> galleryPicturesUrls;
     private List<String> sports;
+    private List<String> focus;
     private Contact contact;
     private Address address;
     private List<Event> events;

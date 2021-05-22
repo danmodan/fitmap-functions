@@ -50,6 +50,8 @@ public class PersonalTrainerCreateRequest {
 
     private List<@NotBlank String> sports;
 
+    private List<@NotBlank String> focus;
+
     private List<@NotBlank String> galleryPicturesUrls;
 
     @JsonProperty(value = "is_busy_schedule")

@@ -46,6 +46,7 @@ public class Gym {
     public static final String BIOGRAPHY = "biography";
     public static final String GALLERY_PICTURES_URLS = "galleryPicturesUrls";
     public static final String SPORTS = "sports";
+    public static final String FOCUS = "focus";
     public static final String CONTACTS = "contacts";
     public static final String ADDRESSES = "addresses";
     public static final String EVENTS = "events";
@@ -71,6 +72,9 @@ public class Gym {
 
     @Builder.Default
     private List<@NotBlank String> sports = new ArrayList<>();
+
+    @Builder.Default
+    private List<@NotBlank String> focus = new ArrayList<>();
 
     @Getter(onMethod = @__({ @Exclude }))
     @Builder.Default
@@ -99,6 +103,15 @@ public class Gym {
         this.sports = Objects.requireNonNullElse(this.sports, new ArrayList<String>());
 
         this.sports.addAll(newSports);
+    }
+
+    public void addFocus(List<String> focus) {
+
+        var newFocus = Objects.requireNonNullElse(focus, new ArrayList<String>());
+
+        this.focus = Objects.requireNonNullElse(this.focus, new ArrayList<String>());
+
+        this.focus.addAll(newFocus);
     }
 
     public void addGalleryPicturesUrls(List<String> galleryPicturesUrls) {
