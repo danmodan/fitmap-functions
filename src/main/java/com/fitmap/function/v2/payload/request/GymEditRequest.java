@@ -36,6 +36,8 @@ public class GymEditRequest {
 
     private List<@NotBlank String> sports;
 
+    private List<@NotBlank String> focus;
+
     private List<@NotBlank String> galleryPicturesUrls;
 
     @NotEmpty

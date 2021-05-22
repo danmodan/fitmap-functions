@@ -104,34 +104,34 @@ public class PersonalTrainerService {
         var personalTrainers = new ArrayList<PersonalTrainer>();
 
         db
-            .collection(PersonalTrainer.PERSONAL_TRAINERS_COLLECTION)
-            .whereIn(FieldPath.documentId(), personalTrainerIds)
-            .get()
-            .get()
-            .forEach(queryDocSnapshot -> {
+                .collection(PersonalTrainer.PERSONAL_TRAINERS_COLLECTION)
+                .whereIn(FieldPath.documentId(), personalTrainerIds)
+                .get()
+                .get()
+                .forEach(queryDocSnapshot -> {
 
-                try {
+                    try {
 
-                    var docRef = queryDocSnapshot.getReference();
-                    var contactsColl = docRef.collection(Contact.CONTACTS_COLLECTION).get();
-                    var addressColl = docRef.collection(Address.ADDRESSES_COLLECTION).get();
-                    var eventsColl = docRef.collection(Event.EVENTS_COLLECTION).get();
-                    var subscriptionPlansColl = docRef.collection(SubscriptionPlan.SUBSCRIPTION_PLANS_COLLECTION).get();
+                        var docRef = queryDocSnapshot.getReference();
+                        var contactsColl = docRef.collection(Contact.CONTACTS_COLLECTION).get();
+                        var addressColl = docRef.collection(Address.ADDRESSES_COLLECTION).get();
+                        var eventsColl = docRef.collection(Event.EVENTS_COLLECTION).get();
+                        var subscriptionPlansColl = docRef.collection(SubscriptionPlan.SUBSCRIPTION_PLANS_COLLECTION).get();
 
-                    var personalTrainer = queryDocSnapshot.toObject(PersonalTrainer.class);
-                    var contacts = contactsColl.get().toObjects(Contact.class);
-                    var addresses = addressColl.get().toObjects(Address.class);
-                    var events = eventsColl.get().toObjects(Event.class);
-                    var subscriptionPlans = subscriptionPlansColl.get().toObjects(SubscriptionPlan.class);
+                        var personalTrainer = queryDocSnapshot.toObject(PersonalTrainer.class);
+                        var contacts = contactsColl.get().toObjects(Contact.class);
+                        var addresses = addressColl.get().toObjects(Address.class);
+                        var events = eventsColl.get().toObjects(Event.class);
+                        var subscriptionPlans = subscriptionPlansColl.get().toObjects(SubscriptionPlan.class);
 
-                    personalTrainer.addContacts(contacts);
-                    personalTrainer.addAddresses(addresses);
-                    personalTrainer.addEvents(events);
-                    personalTrainer.addSubscriptionPlan(subscriptionPlans);
-                    personalTrainers.add(personalTrainer);
+                        personalTrainer.addContacts(contacts);
+                        personalTrainer.addAddresses(addresses);
+                        personalTrainer.addEvents(events);
+                        personalTrainer.addSubscriptionPlan(subscriptionPlans);
+                        personalTrainers.add(personalTrainer);
 
-                } catch (Exception e) { }
-            });
+                    } catch (Exception e) { }
+                });
 
         return personalTrainers;
 
@@ -155,6 +155,7 @@ public class PersonalTrainerService {
 
         propsToUpdate.put(PersonalTrainer.GALLERY_PICTURES_URLS, personalTrainer.getGalleryPicturesUrls());
         propsToUpdate.put(PersonalTrainer.SPORTS, personalTrainer.getSports());
+        propsToUpdate.put(PersonalTrainer.FOCUS, personalTrainer.getFocus());
 
         if(personalTrainer.getOnlineService() != null) {
             propsToUpdate.put(PersonalTrainer.ONLINE_SERVICE, personalTrainer.getOnlineService());

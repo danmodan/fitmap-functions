@@ -104,34 +104,34 @@ public class GymService {
         var gyms = new ArrayList<Gym>();
 
         db
-            .collection(Gym.GYMS_COLLECTION)
-            .whereIn(FieldPath.documentId(), gymIds)
-            .get()
-            .get()
-            .forEach(queryDocSnapshot -> {
+                .collection(Gym.GYMS_COLLECTION)
+                .whereIn(FieldPath.documentId(), gymIds)
+                .get()
+                .get()
+                .forEach(queryDocSnapshot -> {
 
-                try {
+                    try {
 
-                    var docRef = queryDocSnapshot.getReference();
-                    var contactsColl = docRef.collection(Contact.CONTACTS_COLLECTION).get();
-                    var addressColl = docRef.collection(Address.ADDRESSES_COLLECTION).get();
-                    var eventsColl = docRef.collection(Event.EVENTS_COLLECTION).get();
-                    var subscriptionPlansColl = docRef.collection(SubscriptionPlan.SUBSCRIPTION_PLANS_COLLECTION).get();
+                        var docRef = queryDocSnapshot.getReference();
+                        var contactsColl = docRef.collection(Contact.CONTACTS_COLLECTION).get();
+                        var addressColl = docRef.collection(Address.ADDRESSES_COLLECTION).get();
+                        var eventsColl = docRef.collection(Event.EVENTS_COLLECTION).get();
+                        var subscriptionPlansColl = docRef.collection(SubscriptionPlan.SUBSCRIPTION_PLANS_COLLECTION).get();
 
-                    var gym = queryDocSnapshot.toObject(Gym.class);
-                    var contacts = contactsColl.get().toObjects(Contact.class);
-                    var addresses = addressColl.get().toObjects(Address.class);
-                    var events = eventsColl.get().toObjects(Event.class);
-                    var subscriptionPlans = subscriptionPlansColl.get().toObjects(SubscriptionPlan.class);
+                        var gym = queryDocSnapshot.toObject(Gym.class);
+                        var contacts = contactsColl.get().toObjects(Contact.class);
+                        var addresses = addressColl.get().toObjects(Address.class);
+                        var events = eventsColl.get().toObjects(Event.class);
+                        var subscriptionPlans = subscriptionPlansColl.get().toObjects(SubscriptionPlan.class);
 
-                    gym.addContacts(contacts);
-                    gym.addAddresses(addresses);
-                    gym.addEvents(events);
-                    gym.addSubscriptionPlan(subscriptionPlans);
-                    gyms.add(gym);
+                        gym.addContacts(contacts);
+                        gym.addAddresses(addresses);
+                        gym.addEvents(events);
+                        gym.addSubscriptionPlan(subscriptionPlans);
+                        gyms.add(gym);
 
-                } catch (Exception e) { }
-            });
+                    } catch (Exception e) { }
+                });
 
         return gyms;
 
@@ -152,9 +152,10 @@ public class GymService {
         if(StringUtils.isNotBlank(gym.getProfileName())) {
             propsToUpdate.put(Gym.PROFILE_NAME, gym.getProfileName());
         }
-        
+
         propsToUpdate.put(Gym.GALLERY_PICTURES_URLS, gym.getGalleryPicturesUrls());
         propsToUpdate.put(Gym.SPORTS, gym.getSports());
+        propsToUpdate.put(Gym.FOCUS, gym.getFocus());
 
         docRef.update(propsToUpdate).get();
 
