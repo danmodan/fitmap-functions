@@ -26,10 +26,10 @@ public class FocusService {
 
         var collRef = db.collection(Focus.FOCUS_COLLECTION);
 
-        var focusPerDocRef = focus.stream().map(sport -> {
+        var focusPerDocRef = focus.stream().map(f -> {
             var ref = collRef.document();
-            sport.setId(ref.getId());
-            return Pair.of(sport, ref);
+            f.setId(ref.getId());
+            return Pair.of(f, ref);
         }).collect(Collectors.toSet());
 
         CheckConstraintsRequestBodyService.checkConstraints(focus);
