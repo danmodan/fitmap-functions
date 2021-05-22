@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 @JsonInclude(value = Include.NON_ABSENT)
 public class Focus {
 
-    public static final String FOCUS_COLLECTION = "focus";
+    public static final String FOCUS_COLLECTION = "focus_v2";
     public static final String ID = "id";
     public static final String NAME = "name";
 
