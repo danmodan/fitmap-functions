@@ -29,6 +29,7 @@ import com.fitmap.function.v2.payload.request.StudentEditRequest;
 import com.fitmap.function.v2.payload.request.SubscriptionPlanCreateRequest;
 import com.fitmap.function.v2.payload.request.SubscriptionPlanEditRequest;
 import com.fitmap.function.v2.payload.response.GymResponse;
+import com.fitmap.function.v2.payload.response.LocationResponse;
 import com.fitmap.function.v2.payload.response.PersonalTrainerResponse;
 import com.fitmap.function.v2.payload.response.StudentResponse;
 
@@ -341,6 +342,27 @@ public class DtoMapper {
             .busySchedule(model.getBusySchedule())
             .onlineService(model.getOnlineService())
             .homeService(model.getHomeService())
+            .build();
+    }
+
+    public static LocationResponse from(Address model) {
+
+        if(model == null) {
+            return null;
+        }
+
+        return LocationResponse
+            .builder()
+            .id(model.getId())
+            .addressText(model.getAddressText())
+            .mainAddress(model.isMainAddress())
+            .latitude(model.getLatitude())
+            .longitude(model.getLongitude())
+            .geoHash(model.getGeoHash())
+            .gym(from(model.getGym()))
+            .personalTrainer(from(model.getPersonalTrainer()))
+            .student(from(model.getStudent()))
+            .events(model.getEvents())
             .build();
     }
 

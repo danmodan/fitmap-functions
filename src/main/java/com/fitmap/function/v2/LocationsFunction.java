@@ -1,5 +1,6 @@
 package com.fitmap.function.v2;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fitmap.function.domain.Address;
@@ -8,6 +9,7 @@ import com.fitmap.function.domain.PersonalTrainer;
 import com.fitmap.function.domain.Student;
 import com.fitmap.function.domain.UserType;
 import com.fitmap.function.exception.TerminalException;
+import com.fitmap.function.mapper.DtoMapper;
 import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestMethodService;
@@ -141,7 +143,13 @@ public class LocationsFunction {
             foundStudents.forEach(student -> addressesPerStudent.get(student).forEach(a -> a.setStudent(student)));
         }
 
-        ResponseService.writeResponse(response, found);
+        var responseDto = found
+            .stream()
+            .map(DtoMapper::from)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        ResponseService.writeResponse(response, responseDto);
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
     }
 
