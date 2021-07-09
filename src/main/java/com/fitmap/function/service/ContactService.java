@@ -19,6 +19,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteBatch;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
@@ -131,12 +132,15 @@ public class ContactService {
                     var eventDocref = subEventCollRef.document(event.getId());
                     batch.update(eventDocref, Event.CONTACT, event.getContact());
 
-                    var superAddressDocRef = superAddressesCollRef.document(event.getAddress().getId());
+                    if(event.getAddress() != null && StringUtils.isNotBlank(event.getAddress().getId())) {
 
-                    var superAddress = superAddressPerId.get(event.getAddress().getId());
-                    superAddress.getEvents().remove(event);
-                    superAddress.getEvents().add(event);
-                    batch.update(superAddressDocRef, Address.EVENTS, superAddress.getEvents());
+                        var superAddressDocRef = superAddressesCollRef.document(event.getAddress().getId());
+
+                        var superAddress = superAddressPerId.get(event.getAddress().getId());
+                        superAddress.getEvents().remove(event);
+                        superAddress.getEvents().add(event);
+                        batch.update(superAddressDocRef, Address.EVENTS, superAddress.getEvents());
+                    }
                 });
             }
 
@@ -226,12 +230,15 @@ public class ContactService {
                     var eventDocref = subEventCollRef.document(event.getId());
                     batch.update(eventDocref, Event.CONTACT, event.getContact());
 
-                    var superAddressDocRef = superAddressesCollRef.document(event.getAddress().getId());
+                    if(event.getAddress() != null && StringUtils.isNotBlank(event.getAddress().getId())) {
 
-                    var superAddress = superAddressPerId.get(event.getAddress().getId());
-                    superAddress.getEvents().remove(event);
-                    superAddress.getEvents().add(event);
-                    batch.update(superAddressDocRef, Address.EVENTS, superAddress.getEvents());
+                        var superAddressDocRef = superAddressesCollRef.document(event.getAddress().getId());
+
+                        var superAddress = superAddressPerId.get(event.getAddress().getId());
+                        superAddress.getEvents().remove(event);
+                        superAddress.getEvents().add(event);
+                        batch.update(superAddressDocRef, Address.EVENTS, superAddress.getEvents());
+                    }
                 });
             }
 
