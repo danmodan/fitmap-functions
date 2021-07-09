@@ -155,6 +155,7 @@ public class PersonalTrainerService {
 
         propsToUpdate.put(PersonalTrainer.GALLERY_PICTURES_URLS, personalTrainer.getGalleryPicturesUrls());
         propsToUpdate.put(PersonalTrainer.SPORTS, personalTrainer.getSports());
+        propsToUpdate.put(PersonalTrainer.FIGHTS, personalTrainer.getFights());
         propsToUpdate.put(PersonalTrainer.FOCUS, personalTrainer.getFocus());
 
         if(personalTrainer.getOnlineService() != null) {

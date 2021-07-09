@@ -69,6 +69,9 @@ public class FitMapFunction implements HttpFunction {
                 case "/api/v2/sport":
                     SportFunction.service(request, response);
                     break;
+                case "/api/v2/fight":
+                    FightFunction.service(request, response);
+                    break;
                 case "/api/v2/focus":
                     FocusFunction.service(request, response);
                     break;

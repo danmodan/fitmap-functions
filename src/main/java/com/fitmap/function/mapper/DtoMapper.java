@@ -294,6 +294,7 @@ public class DtoMapper {
             .subscriptionPlans(from(dto.getSubscriptionPlans(), DtoMapper::from))
             .biography(dto.getBiography())
             .sports(Objects.requireNonNullElse(dto.getSports(), Collections.emptyList()))
+            .fights(Objects.requireNonNullElse(dto.getFights(), Collections.emptyList()))
             .focus(Objects.requireNonNullElse(dto.getFocus(), Collections.emptyList()))
             .galleryPicturesUrls(Objects.requireNonNullElse(dto.getGalleryPicturesUrls(), Collections.emptyList()))
             .busySchedule(dto.getBusySchedule())

@@ -47,6 +47,7 @@ public class PersonalTrainer {
     public static final String BIOGRAPHY = "biography";
     public static final String GALLERY_PICTURES_URLS = "galleryPicturesUrls";
     public static final String SPORTS = "sports";
+    public static final String FIGHTS = "fights";
     public static final String FOCUS = "focus";
     public static final String CONTACTS = "contacts";
     public static final String ADDRESSES = "addresses";
@@ -76,6 +77,9 @@ public class PersonalTrainer {
 
     @Builder.Default
     private List<@NotBlank String> sports = new ArrayList<>();
+
+    @Builder.Default
+    private List<@NotBlank String> fights = new ArrayList<>();
 
     @Builder.Default
     private List<@NotBlank String> focus = new ArrayList<>();
@@ -116,6 +120,15 @@ public class PersonalTrainer {
         this.sports = Objects.requireNonNullElse(this.sports, new ArrayList<String>());
 
         this.sports.addAll(newSports);
+    }
+
+    public void addFIghts(List<String> fights) {
+
+        var newFights = Objects.requireNonNullElse(fights, new ArrayList<String>());
+
+        this.fights = Objects.requireNonNullElse(this.fights, new ArrayList<String>());
+
+        this.sports.addAll(newFights);
     }
 
     public void addFocus(List<String> focus) {

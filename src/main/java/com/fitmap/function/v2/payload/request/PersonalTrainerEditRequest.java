@@ -37,6 +37,8 @@ public class PersonalTrainerEditRequest {
 
     private List<@NotBlank String> sports;
 
+    private List<@NotBlank String> fights;
+
     private List<@NotBlank String> focus;
 
     private List<@NotBlank String> galleryPicturesUrls;
