@@ -122,13 +122,13 @@ public class PersonalTrainer {
         this.sports.addAll(newSports);
     }
 
-    public void addFIghts(List<String> fights) {
+    public void addFights(List<String> fights) {
 
         var newFights = Objects.requireNonNullElse(fights, new ArrayList<String>());
 
         this.fights = Objects.requireNonNullElse(this.fights, new ArrayList<String>());
 
-        this.sports.addAll(newFights);
+        this.fights.addAll(newFights);
     }
 
     public void addFocus(List<String> focus) {
