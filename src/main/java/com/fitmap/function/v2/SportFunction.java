@@ -111,7 +111,7 @@ public class SportFunction {
 
     private static List<Sport> create(List<String> names) {
 
-        var sports = Objects.requireNonNullElse(names, new ArrayList<String>()).stream().map(name -> new Sport(null, name)).collect(Collectors.toList());
+        var sports = Objects.requireNonNullElse(names, new ArrayList<String>()).stream().map(name -> new Sport(null, name, null)).collect(Collectors.toList());
 
         if(CollectionUtils.isEmpty(sports)) {
 
