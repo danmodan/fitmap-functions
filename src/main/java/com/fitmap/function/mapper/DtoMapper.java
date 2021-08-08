@@ -107,6 +107,7 @@ public class DtoMapper {
             .contact(StringUtils.isBlank(dto.getContactId()) ? null : Contact.builder().id(dto.getContactId()).build())
             .showPhoneContact(dto.getShowPhoneContact())
             .showEmailContact(dto.getShowEmailContact())
+            .isOnline(dto.getIsOnline())
             .build();
     }
 
@@ -132,6 +133,7 @@ public class DtoMapper {
             .contact(StringUtils.isBlank(dto.getContactId()) ? null : Contact.builder().id(dto.getContactId()).build())
             .showPhoneContact(dto.getShowPhoneContact())
             .showEmailContact(dto.getShowEmailContact())
+            .isOnline(dto.getIsOnline())
             .build();
     }
 

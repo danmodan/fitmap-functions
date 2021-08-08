@@ -62,4 +62,6 @@ public class EventCreateRequest {
 
     private Boolean showEmailContact;
 
+    private Boolean isOnline;
+
 }

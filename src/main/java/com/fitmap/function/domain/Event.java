@@ -48,6 +48,7 @@ public class Event {
     public static final String CONTACT = "contact";
     public static final String SHOW_PHONE_CONTACT = "showPhoneContact";
     public static final String SHOW_EMAIL_CONTACT = "showEmailContact";
+    public static final String IS_ONLINE = "isOnline";
 
     @NotBlank
     private String id;
@@ -83,6 +84,8 @@ public class Event {
     private Boolean showPhoneContact;
 
     private Boolean showEmailContact;
+
+    private Boolean isOnline;
 
     @Override
     public int hashCode() {
@@ -126,6 +129,7 @@ public class Event {
         fields.put(CONTACT, contact);
         fields.put(SHOW_PHONE_CONTACT, showPhoneContact);
         fields.put(SHOW_EMAIL_CONTACT, showEmailContact);
+        fields.put(IS_ONLINE, isOnline);
 
         return fields;
     }
