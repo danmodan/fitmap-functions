@@ -145,9 +145,7 @@ public class GymService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put(Gym.UPDATED_AT, new Date());
 
-        if(StringUtils.isNotEmpty(gym.getBiography())) {
-            propsToUpdate.put(Gym.BIOGRAPHY, gym.getBiography());
-        }
+        propsToUpdate.put(Gym.BIOGRAPHY, StringUtils.defaultString(gym.getBiography()));
 
         if(StringUtils.isNotBlank(gym.getProfileName())) {
             propsToUpdate.put(Gym.PROFILE_NAME, gym.getProfileName());

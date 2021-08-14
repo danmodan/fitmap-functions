@@ -145,9 +145,7 @@ public class PersonalTrainerService {
         var propsToUpdate = new HashMap<String, Object>();
         propsToUpdate.put(PersonalTrainer.UPDATED_AT, new Date());
 
-        if(StringUtils.isNotEmpty(personalTrainer.getBiography())) {
-            propsToUpdate.put(PersonalTrainer.BIOGRAPHY, personalTrainer.getBiography());
-        }
+        propsToUpdate.put(PersonalTrainer.BIOGRAPHY, StringUtils.defaultString(personalTrainer.getBiography()));
 
         if(StringUtils.isNotBlank(personalTrainer.getProfileName())) {
             propsToUpdate.put(PersonalTrainer.PROFILE_NAME, personalTrainer.getProfileName());
