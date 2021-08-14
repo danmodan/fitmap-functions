@@ -60,7 +60,7 @@ public class AddressService {
     @SneakyThrows
     public static List<Address> findAddressesNearBy(double latitude, double longitude, double radius) {
 
-        if(radius <= 0) {
+        if(radius <= 0 || radius > 5) {
             return Collections.emptyList();
         }
 
