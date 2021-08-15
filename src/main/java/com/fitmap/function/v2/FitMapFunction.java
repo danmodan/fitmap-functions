@@ -24,14 +24,10 @@ import lombok.extern.java.Log;
 @Log
 public class FitMapFunction implements HttpFunction {
 
-    static {
-
-        SystemTimeZoneConfig.setUtcDefaultTimeZone();
-    }
-
     public FitMapFunction() {
 
         log.log(Level.INFO, "init FitMapFunction /api/v2. timestamp=" + ZonedDateTime.now());
+        SystemTimeZoneConfig.setUtcDefaultTimeZone();
     }
 
     @Override
@@ -43,40 +39,40 @@ public class FitMapFunction implements HttpFunction {
 
             switch (path) {
                 case "/api/v2/set-roles":
-                    SetRolesFunction.service(request, response);
+                    SetRolesFunction.doService(request, response);
                     break;
                 case "/api/v2/gym":
-                    GymFunction.service(request, response);
+                    GymFunction.doService(request, response);
                     break;
                 case "/api/v2/gym/events":
-                    EventFunction.service(request, response, Gym.GYMS_COLLECTION);
+                    EventFunction.doService(request, response, Gym.GYMS_COLLECTION);
                     break;
                 case "/api/v2/gym/subscription-plans":
-                    SubscriptionPlanFunction.service(request, response, Gym.GYMS_COLLECTION);
+                    SubscriptionPlanFunction.doService(request, response, Gym.GYMS_COLLECTION);
                     break;
                 case "/api/v2/personal-trainer":
-                    PersonalTrainerFunction.service(request, response);
+                    PersonalTrainerFunction.doService(request, response);
                     break;
                 case "/api/v2/personal-trainer/events":
-                    EventFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
+                    EventFunction.doService(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
                 case "/api/v2/personal-trainer/subscription-plans":
-                    SubscriptionPlanFunction.service(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
+                    SubscriptionPlanFunction.doService(request, response, PersonalTrainer.PERSONAL_TRAINERS_COLLECTION);
                     break;
                 case "/api/v2/student":
-                    StudentFunction.service(request, response);
+                    StudentFunction.doService(request, response);
                     break;
                 case "/api/v2/sport":
-                    SportFunction.service(request, response);
+                    SportFunction.doService(request, response);
                     break;
                 case "/api/v2/fight":
-                    FightFunction.service(request, response);
+                    FightFunction.doService(request, response);
                     break;
                 case "/api/v2/focus":
-                    FocusFunction.service(request, response);
+                    FocusFunction.doService(request, response);
                     break;
                 case "/api/v2/locations":
-                    LocationsFunction.service(request, response);
+                    LocationsFunction.doService(request, response);
                     break;
                 default:
                     throw new TerminalException("No mapping found for HTTP request path [" + path + "]", HttpStatus.NOT_FOUND);
