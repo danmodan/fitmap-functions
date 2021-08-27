@@ -11,9 +11,11 @@ import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
 import com.fitmap.function.service.CheckRequestMethodService;
 import com.fitmap.function.service.ReadRequestService;
+import com.fitmap.function.service.ResetPasswordService;
 import com.fitmap.function.service.ResponseService;
-import com.fitmap.function.service.SetRolesService;
-import com.fitmap.function.v2.payload.request.SetRolesRequest;
+import com.fitmap.function.service.SignUpEmailVerifyService;
+import com.fitmap.function.v2.payload.request.SendResetPasswordEmailRequest;
+import com.fitmap.function.v2.payload.request.SendVerificationEmailRequest;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
@@ -26,11 +28,11 @@ import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 import lombok.extern.java.Log;
 
 @Log
-public class SetRolesFunction implements HttpFunction {
+public class SendAccountManagementEmailFunction implements HttpFunction {
 
-    public SetRolesFunction() {
+    public SendAccountManagementEmailFunction() {
 
-        log.log(Level.INFO, "init SetRolesFunction. timestamp=" + ZonedDateTime.now());
+        log.log(Level.INFO, "init SendAccountManagementEmailFunction. timestamp=" + ZonedDateTime.now());
         SystemTimeZoneConfig.setUtcDefaultTimeZone();
     }
 
@@ -42,8 +44,11 @@ public class SetRolesFunction implements HttpFunction {
             final var path = request.getPath();
 
             switch (path) {
-                case "/api/v2/set-roles":
-                    doService(request, response);
+                case "/api/v2/send-sign-up-verify-email":
+                    sendVerificationEmail(request, response);
+                    break;
+                case "/api/v2/send-reset-password-email":
+                    sendResetPasswordEmail(request, response);
                     break;
                 default:
                     throw new TerminalException("No mapping found for HTTP request path [" + path + "]", HttpStatus.NOT_FOUND);
@@ -58,20 +63,40 @@ public class SetRolesFunction implements HttpFunction {
 
     }
 
-    public static void doService(HttpRequest request, HttpResponse response) {
+    public static void sendResetPasswordEmail(HttpRequest request, HttpResponse response) {
 
         CheckRequestMethodService.checkPostMethod(request);
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var idToken = ReadRequestService.getUserIdToken(request);
-        var dto = ReadRequestService.getBody(request, SetRolesRequest.class);
-        dto.setIdToken(idToken);
+        var clientLocale = ReadRequestService.getAcceptLanguage(request);
+
+        var dto = ReadRequestService.getBody(request, SendResetPasswordEmailRequest.class);
+        dto.setLocale(clientLocale);
 
         CheckConstraintsRequestBodyService.checkConstraints(dto);
 
-        SetRolesService.setRoles(dto.getIdToken(), dto.getUserType().name());
+        ResetPasswordService.sendResetPasswordEmail(dto);
 
+        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
+    }
+
+    public static void sendVerificationEmail(HttpRequest request, HttpResponse response) {
+
+        CheckRequestMethodService.checkPostMethod(request);
+
+        var userIdToken = ReadRequestService.getUserIdToken(request);
+        var clientLocale = ReadRequestService.getAcceptLanguage(request);
+
+        var dto = new SendVerificationEmailRequest();
+        dto.setIdToken(userIdToken);
+        dto.setLocale(clientLocale);
+
+        CheckConstraintsRequestBodyService.checkConstraints(dto);
+
+        SignUpEmailVerifyService.sendVerificationEmail(dto);
+
+        ResponseService.fillResponseWithStatus(response, HttpStatus.NO_CONTENT);
     }
 
 }

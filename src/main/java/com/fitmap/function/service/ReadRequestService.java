@@ -2,6 +2,7 @@ package com.fitmap.function.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import com.fitmap.function.config.ObjectMapperConfig;
 import com.fitmap.function.exception.TerminalException;
@@ -58,4 +59,22 @@ public class ReadRequestService {
         return request.getFirstHeader("User_id").orElseThrow(() -> new TerminalException("User_id header is mandatory.", HttpStatus.BAD_REQUEST));
     }
 
+    public static String getUserIdToken(HttpRequest request) {
+
+        return request.getFirstHeader("User_id_token").orElseThrow(() -> new TerminalException("User_id_token header is mandatory.", HttpStatus.BAD_REQUEST));
+    }
+
+    public static Locale getAcceptLanguage(HttpRequest request) {
+
+        try {
+
+            var acceptLang = request.getFirstHeader("Accept-Language");
+
+            return new Locale(acceptLang.orElse("en"));
+
+        } catch (Exception e) {
+
+            return new Locale("en");
+        }
+    }
 }

@@ -74,6 +74,12 @@ public class FitMapFunction implements HttpFunction {
                 case "/api/v2/locations":
                     LocationsFunction.doService(request, response);
                     break;
+                case "/api/v2/send-sign-up-verify-email":
+                    SendAccountManagementEmailFunction.sendVerificationEmail(request, response);
+                    break;
+                case "/api/v2/send-reset-password-email":
+                    SendAccountManagementEmailFunction.sendResetPasswordEmail(request, response);
+                    break;
                 default:
                     throw new TerminalException("No mapping found for HTTP request path [" + path + "]", HttpStatus.NOT_FOUND);
             }

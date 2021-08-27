@@ -1,10 +1,9 @@
 package com.fitmap.function.v2.payload.request;
 
-import java.math.BigDecimal;
+import java.util.Locale;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -28,21 +27,12 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(value = SnakeCaseStrategy.class)
 @JsonInclude(value = Include.NON_ABSENT)
-public class SubscriptionPlanEditRequest {
+public class SendResetPasswordEmailRequest {
+
+    // não precisa preencher. pega do header Accept-Language
+    @NotNull
+    private Locale locale;
 
     @NotBlank
-    private String id;
-
-    @Size(max = 180)
-    private String name;
-
-    @PositiveOrZero
-    private BigDecimal price;
-
-    @PositiveOrZero
-    private int numberMonth;
-
-    @Size(max = 2000)
-    private String description;
-
+    private String receiverEmail;
 }

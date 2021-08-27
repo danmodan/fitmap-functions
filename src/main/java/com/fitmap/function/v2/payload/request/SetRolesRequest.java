@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fitmap.function.domain.UserType;
 
@@ -21,6 +21,7 @@ import lombok.Setter;
 @JsonNaming(value = SnakeCaseStrategy.class)
 public class SetRolesRequest {
 
+    // não precisa preencher. pega do header User_id_token
     @NotBlank
     private String idToken;
 
