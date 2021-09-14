@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import com.fitmap.function.service.FocusService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.util.Constants;
+import com.fitmap.function.v2.payload.request.FocusCreateRequest;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
@@ -91,7 +93,9 @@ public class FocusFunction implements HttpFunction {
 
     private static void doGet(HttpRequest request, HttpResponse response) {
 
-        var found = find(request.getQueryParameters().get("ids"));
+        var clientLocale = ReadRequestService.getAcceptLanguage(request);
+
+        var found = find(request.getQueryParameters().get("ids"), clientLocale);
 
         ResponseService.writeResponse(response, found);
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
@@ -101,7 +105,7 @@ public class FocusFunction implements HttpFunction {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, String[].class);
+        var dto = ReadRequestService.getBody(request, FocusCreateRequest[].class);
 
         CheckConstraintsRequestBodyService.checkNotEmpty(dto);
 
@@ -147,19 +151,20 @@ public class FocusFunction implements HttpFunction {
         FocusService.remove(ids);
     }
 
-    private static List<Focus> create(List<String> names) {
+    private static List<Focus> create(List<FocusCreateRequest> request) {
 
-        var focusList = Objects.requireNonNullElse( names, new ArrayList<String>())
-                .stream()
-                .map(name -> new Focus(null, name))
-                .collect(Collectors.toList());
+        var focuses = Objects
+            .requireNonNullElse(request, new ArrayList<FocusCreateRequest>())
+            .stream()
+            .map(item -> new Focus(null, item.getName(), item.getLanguages()))
+            .collect(Collectors.toList());
 
-        if(CollectionUtils.isEmpty(focusList)) {
+        if(CollectionUtils.isEmpty(focuses)) {
 
             return Collections.emptyList();
         }
 
-        return FocusService.create(focusList);
+        return FocusService.create(focuses);
     }
 
     private static List<Focus> update(List<Focus> focusList) {
@@ -167,13 +172,31 @@ public class FocusFunction implements HttpFunction {
         return FocusService.update(focusList);
     }
 
-    private static List<Focus> find(List<String> ids)  {
+    private static List<Focus> find(List<String> ids, Locale locale)  {
+
+        List<Focus> result = null;
 
         if(CollectionUtils.isNotEmpty(ids)) {
 
-            return FocusService.find(ids);
+            result = FocusService.find(ids);
+        } else {
+
+            result = FocusService.findAll();
         }
 
-        return FocusService.findAll();
+        var filtered = result
+            .stream()
+            .filter(focus -> focus.isLaguageSupported(locale))
+            .collect(Collectors.toList());
+
+        if(CollectionUtils.isNotEmpty(filtered)) {
+
+            return filtered;
+        }
+
+        return result
+            .stream()
+            .filter(focus -> focus.isLaguageSupported("en"))
+            .collect(Collectors.toList());
     }
 }

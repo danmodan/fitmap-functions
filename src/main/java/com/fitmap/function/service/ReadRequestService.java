@@ -68,9 +68,16 @@ public class ReadRequestService {
 
         try {
 
-            var acceptLang = request.getFirstHeader("Accept-Language");
+            var acceptLang = request.getFirstHeader("Accept-Language").orElse("en");
 
-            return new Locale(acceptLang.orElse("en"));
+            if(acceptLang.matches("[a-z]{2}-[A-Z]{2}")) {
+
+                var split = acceptLang.split("-");
+
+                return new Locale(split[0], split[1]);
+            }
+
+            return new Locale(acceptLang);
 
         } catch (Exception e) {
 

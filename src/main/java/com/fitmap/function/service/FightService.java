@@ -72,7 +72,13 @@ public class FightService {
 
         var collRef = db.collection(Fight.FIGHTS_COLLECTION);
 
-        fights.forEach(fight ->  batch.update(collRef.document(fight.getId()), Fight.NAME, fight.getName()));
+        fights.forEach(fight ->  batch
+            .update(
+                collRef.document(fight.getId()),
+                Fight.NAME, fight.getName(),
+                Fight.LANGUAGES, fight.getLanguages()
+            )
+        );
 
         CheckConstraintsRequestBodyService.checkConstraints(fights);
 

@@ -1,14 +1,26 @@
 package com.fitmap.function.domain;
 
+import java.util.List;
+import java.util.Locale;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import org.apache.commons.collections4.CollectionUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -24,12 +36,17 @@ public class Fight {
     public static final String FIGHTS_COLLECTION = "fights_v2";
     public static final String ID = "id";
     public static final String NAME = "name";
+    public static final String LANGUAGES = "languages";
 
     @NotBlank
     private String id;
 
+    @NotBlank
     @Size(max = 1000)
     private String name;
+
+    @NotEmpty
+    private List<@NotBlank @Size(max = 2) String> languages;
 
     @Override
     public int hashCode() {
@@ -53,6 +70,24 @@ public class Fight {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public boolean isLaguageSupported(String lang) {
+
+        if(CollectionUtils.isEmpty(languages)) {
+            return false;
+        }
+
+        return languages.contains(lang);
+    }
+
+    public boolean isLaguageSupported(Locale locale) {
+
+        if(locale == null) {
+            return false;
+        }
+
+        return isLaguageSupported(locale.getLanguage());
     }
 
 }

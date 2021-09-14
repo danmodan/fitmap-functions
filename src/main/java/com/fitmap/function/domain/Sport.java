@@ -1,6 +1,11 @@
 package com.fitmap.function.domain;
 
+import java.util.List;
+import java.util.Locale;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import com.fitmap.function.domain.constants.SportsType;
+
+import org.apache.commons.collections4.CollectionUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,15 +38,21 @@ public class Sport {
     public static final String SPORTS_COLLECTION = "sports_v2";
     public static final String ID = "id";
     public static final String NAME = "name";
+    public static final String TYPE = "type";
+    public static final String LANGUAGES = "languages";
 
     @NotBlank
     private String id;
 
+    @NotBlank
     @Size(max = 1000)
     private String name;
 
+    @NotNull
     private SportsType type;
 
+    @NotEmpty
+    private List<@NotBlank @Size(max = 2) String> languages;
 
     @Override
     public int hashCode() {
@@ -63,6 +76,24 @@ public class Sport {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public boolean isLaguageSupported(String lang) {
+
+        if(CollectionUtils.isEmpty(languages)) {
+            return false;
+        }
+
+        return languages.contains(lang);
+    }
+
+    public boolean isLaguageSupported(Locale locale) {
+
+        if(locale == null) {
+            return false;
+        }
+
+        return isLaguageSupported(locale.getLanguage());
     }
 
 }

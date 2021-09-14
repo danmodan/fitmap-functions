@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.service.SportService;
 import com.fitmap.function.util.Constants;
+import com.fitmap.function.v2.payload.request.SportCreateRequest;
 import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
@@ -91,7 +93,9 @@ public class SportFunction implements HttpFunction {
 
     private static void doGet(HttpRequest request, HttpResponse response) {
 
-        var found = find(request.getQueryParameters().get("ids"));
+        var clientLocale = ReadRequestService.getAcceptLanguage(request);
+
+        var found = find(request.getQueryParameters().get("ids"), clientLocale);
 
         ResponseService.writeResponse(response, found);
         ResponseService.fillResponseWithStatus(response, HttpStatus.OK);
@@ -101,7 +105,7 @@ public class SportFunction implements HttpFunction {
 
         CheckRequestContentTypeService.checkApplicationJsonContentType(request);
 
-        var dto = ReadRequestService.getBody(request, String[].class);
+        var dto = ReadRequestService.getBody(request, SportCreateRequest[].class);
 
         CheckConstraintsRequestBodyService.checkNotEmpty(dto);
 
@@ -147,9 +151,13 @@ public class SportFunction implements HttpFunction {
         SportService.remove(ids);
     }
 
-    private static List<Sport> create(List<String> names) {
+    private static List<Sport> create(List<SportCreateRequest> request) {
 
-        var sports = Objects.requireNonNullElse(names, new ArrayList<String>()).stream().map(name -> new Sport(null, name, null)).collect(Collectors.toList());
+        var sports = Objects
+            .requireNonNullElse(request, new ArrayList<SportCreateRequest>())
+            .stream()
+            .map(item -> new Sport(null, item.getName(), item.getType(), item.getLanguages()))
+            .collect(Collectors.toList());
 
         if(CollectionUtils.isEmpty(sports)) {
 
@@ -164,14 +172,31 @@ public class SportFunction implements HttpFunction {
         return SportService.update(sports);
     }
 
-    private static List<Sport> find(List<String> ids)  {
+    private static List<Sport> find(List<String> ids, Locale locale)  {
+
+        List<Sport> result = null;
 
         if(CollectionUtils.isNotEmpty(ids)) {
 
-            return SportService.find(ids);
+            result = SportService.find(ids);
+        } else {
+
+            result = SportService.findAll();
         }
 
-        return SportService.findAll();
-    }
+        var filtered = result
+            .stream()
+            .filter(sport -> sport.isLaguageSupported(locale))
+            .collect(Collectors.toList());
 
+        if(CollectionUtils.isNotEmpty(filtered)) {
+
+            return filtered;
+        }
+
+        return result
+            .stream()
+            .filter(sport -> sport.isLaguageSupported("en"))
+            .collect(Collectors.toList());
+    }
 }

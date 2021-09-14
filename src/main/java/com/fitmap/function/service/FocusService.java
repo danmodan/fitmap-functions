@@ -70,7 +70,13 @@ public class FocusService {
 
         var collRef = db.collection(Focus.FOCUS_COLLECTION);
 
-        focus.forEach(sport ->  batch.update(collRef.document(sport.getId()), Focus.NAME, sport.getName()));
+        focus.forEach(sport ->  batch
+            .update(
+                collRef.document(sport.getId()),
+                Focus.NAME, sport.getName(),
+                Focus.LANGUAGES, sport.getLanguages()
+            )
+        );
 
         CheckConstraintsRequestBodyService.checkConstraints(focus);
 

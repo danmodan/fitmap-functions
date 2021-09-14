@@ -74,7 +74,14 @@ public class SportService {
 
         var collRef = db.collection(Sport.SPORTS_COLLECTION);
 
-        sports.forEach(sport ->  batch.update(collRef.document(sport.getId()), Sport.NAME, sport.getName()));
+        sports.forEach(sport ->  batch
+            .update(
+                collRef.document(sport.getId()),
+                Sport.NAME, sport.getName(),
+                Sport.TYPE, sport.getType(),
+                Sport.LANGUAGES, sport.getLanguages()
+            )
+        );
 
         CheckConstraintsRequestBodyService.checkConstraints(sports);
 
