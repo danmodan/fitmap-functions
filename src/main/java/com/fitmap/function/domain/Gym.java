@@ -1,10 +1,12 @@
 package com.fitmap.function.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.google.cloud.firestore.annotation.Exclude;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -193,6 +196,47 @@ public class Gym {
         }
 
         return Optional.empty();
+    }
+
+    public List<Address> findUnusedAddress() {
+
+        if(CollectionUtils.isEmpty(addresses)) {
+            return Collections.emptyList();
+        }
+
+        return addresses
+            .stream()
+            .filter(address -> {
+                if(address == null) {
+                    return false;
+                }
+
+                if(
+                    StringUtils.isBlank(address.getAddressText()) ||
+                    (!address.isMainAddress() && withoutEvents(address))
+                ) {
+                    return true;
+                }
+
+                return false;
+            })
+            .collect(Collectors.toList());
+    }
+
+    private boolean withoutEvents(Address address) {
+
+        if(CollectionUtils.isEmpty(events)) {
+            return true;
+        }
+
+        for(var event : events) {
+
+            if(Objects.equals(event.getAddress(), address)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

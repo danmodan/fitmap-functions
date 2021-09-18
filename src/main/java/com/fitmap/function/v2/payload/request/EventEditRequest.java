@@ -3,6 +3,7 @@ package com.fitmap.function.v2.payload.request;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
@@ -53,6 +54,9 @@ public class EventEditRequest {
     private String eventCoach;
 
     private String addressId;
+
+    @Valid
+    private AddressRequest address;
 
     @PositiveOrZero
     private BigDecimal currentEventValue;

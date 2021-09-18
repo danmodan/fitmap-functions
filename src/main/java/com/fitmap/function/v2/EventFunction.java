@@ -4,18 +4,23 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
 import com.fitmap.function.config.SystemTimeZoneConfig;
+import com.fitmap.function.domain.Address;
 import com.fitmap.function.domain.Event;
 import com.fitmap.function.domain.Gym;
 import com.fitmap.function.domain.PersonalTrainer;
 import com.fitmap.function.exception.TerminalException;
 import com.fitmap.function.mapper.DtoMapper;
+import com.fitmap.function.service.AddressService;
 import com.fitmap.function.service.CheckConstraintsRequestBodyService;
 import com.fitmap.function.service.CheckRequestContentTypeService;
 import com.fitmap.function.service.EventService;
+import com.fitmap.function.service.GymService;
+import com.fitmap.function.service.PersonalTrainerService;
 import com.fitmap.function.service.ReadRequestService;
 import com.fitmap.function.service.ResponseService;
 import com.fitmap.function.util.Constants;
@@ -25,6 +30,9 @@ import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -127,6 +135,8 @@ public class EventFunction implements HttpFunction {
 
     private static List<Event> create(List<EventCreateRequest> dtos, String superEntityId, String superCollection) {
 
+        createAddresses(dtos, superEntityId, superCollection);
+
         var subEntities = DtoMapper.from(dtos, DtoMapper::from);
 
         return EventService.create(superEntityId, superCollection, subEntities);
@@ -151,9 +161,38 @@ public class EventFunction implements HttpFunction {
 
     private static List<Event> edit(List<EventEditRequest> dtos, String superEntityId, String superCollection) {
 
+        editAddresses(dtos, superEntityId, superCollection);
+
         var subEntities = DtoMapper.from(dtos, DtoMapper::from);
 
-        return EventService.edit(superEntityId, superCollection, subEntities);
+        var updatedEvents = EventService.edit(superEntityId, superCollection, subEntities);
+
+        switch (superCollection) {
+            case Gym.GYMS_COLLECTION:
+                var gym = GymService.find(List.of(superEntityId)).get(0);
+                removeUnusedAddress(superEntityId, superCollection, gym.findUnusedAddress());
+                break;
+            case PersonalTrainer.PERSONAL_TRAINERS_COLLECTION:
+                var personalTrainer = PersonalTrainerService.find(List.of(superEntityId)).get(0);
+                removeUnusedAddress(superEntityId, superCollection, personalTrainer.findUnusedAddress());
+                break;
+        }
+
+        return updatedEvents;
+    }
+
+    private static void removeUnusedAddress(String superEntityId, String superCollection, List<Address> unusedAddress) {
+
+        if(CollectionUtils.isEmpty(unusedAddress)) {
+            return;
+        }
+
+        var addressesIds = unusedAddress
+            .stream()
+            .map(Address::getId)
+            .collect(Collectors.toList());
+
+        AddressService.delete(superEntityId, superCollection, addressesIds);
     }
 
     private static void doDelete(HttpRequest request, HttpResponse response, String superCollection) {
@@ -176,4 +215,71 @@ public class EventFunction implements HttpFunction {
         EventService.delete(superEntityId, superCollection, eventsIds);
     }
 
+    private static void createAddresses(List<EventCreateRequest> dtos, String superEntityId, String superCollection) {
+
+        if(CollectionUtils.isEmpty(dtos)) {
+            return;
+        }
+
+        for(var dto : dtos) {
+
+            var address = DtoMapper.from(dto.getAddress());
+
+            if(address == null || BooleanUtils.toBoolean(dto.getIsOnline())) {
+                dto.setAddressId(null);
+                continue;
+            }
+
+            var created = AddressService.create(superEntityId, superCollection, List.of(address));
+
+            if(CollectionUtils.isEmpty(created)) {
+                continue;
+            }
+
+            dto.setAddressId(created.get(0).getId());
+        }
+    }
+
+    private static void editAddresses(List<EventEditRequest> dtos, String superEntityId, String superCollection) {
+
+        if(CollectionUtils.isEmpty(dtos)) {
+            return;
+        }
+
+        for(var dto : dtos) {
+
+            var address = DtoMapper.from(dto.getAddress());
+            var currentAddressId = dto.getAddressId();
+
+            if(BooleanUtils.toBoolean(dto.getIsOnline()) || (StringUtils.isBlank(currentAddressId) && address == null)) {
+                dto.setAddressId(null);
+                continue;
+            }
+
+            if(StringUtils.isBlank(currentAddressId) && address != null) {
+                var created = AddressService.create(superEntityId, superCollection, List.of(address));
+
+                if(CollectionUtils.isEmpty(created)) {
+                    continue;
+                }
+
+                dto.setAddressId(created.get(0).getId());
+                continue;
+            }
+
+            if(StringUtils.isNotBlank(currentAddressId) && address != null) {
+
+                var created = AddressService.create(superEntityId, superCollection, List.of(address));
+
+                AddressService.delete(superEntityId, superCollection, List.of(currentAddressId));
+
+                if(CollectionUtils.isEmpty(created)) {
+                    continue;
+                }
+
+                dto.setAddressId(created.get(0).getId());
+                continue;
+            }
+        }
+    }
 }

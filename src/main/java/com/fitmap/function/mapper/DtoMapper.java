@@ -181,8 +181,8 @@ public class DtoMapper {
             .createdAt(model.getCreatedAt())
             .updatedAt(model.getUpdatedAt())
             .galleryPicturesUrls(Objects.requireNonNullElse(model.getGalleryPicturesUrls(), Collections.emptyList()))
-            .contact(getFirstIfAny(model.getContacts()))
-            .address(getFirstIfAny(model.getAddresses()))
+            .contact(getMainContactIfAny(model.getContacts()))
+            .address(getMainAddressIfAny(model.getAddresses()))
             .profileName(model.getProfileName())
             .build();
     }
@@ -273,8 +273,8 @@ public class DtoMapper {
             .galleryPicturesUrls(model.getGalleryPicturesUrls())
             .sports(model.getSports())
             .focus(model.getFocus())
-            .contact(getFirstIfAny(model.getContacts()))
-            .address(getFirstIfAny(model.getAddresses()))
+            .contact(getMainContactIfAny(model.getContacts()))
+            .address(getMainAddressIfAny(model.getAddresses()))
             .events(model.getEvents())
             .subscriptionPlans(model.getSubscriptionPlans())
             .profileName(model.getProfileName())
@@ -345,8 +345,8 @@ public class DtoMapper {
             .sports(model.getSports())
             .focus(model.getFocus())
             .fights(model.getFights())
-            .contact(getFirstIfAny(model.getContacts()))
-            .address(getFirstIfAny(model.getAddresses()))
+            .contact(getMainContactIfAny(model.getContacts()))
+            .address(getMainAddressIfAny(model.getAddresses()))
             .events(model.getEvents())
             .subscriptionPlans(model.getSubscriptionPlans())
             .profileName(model.getProfileName())
@@ -377,9 +377,44 @@ public class DtoMapper {
             .build();
     }
 
-    private static <T> T getFirstIfAny(List<T> col) {
+    private static Address getMainAddressIfAny(List<Address> col) {
 
-        return CollectionUtils.isEmpty(col) ? null : col.get(0);
+        if(CollectionUtils.isEmpty(col)) {
+            return null;
+        }
+
+        for(var item : col) {
+
+            if(item == null) {
+                continue;
+            }
+
+            if(item.isMainAddress()) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    private static Contact getMainContactIfAny(List<Contact> col) {
+
+        if(CollectionUtils.isEmpty(col)) {
+            return null;
+        }
+
+        for(var item : col) {
+
+            if(item == null) {
+                continue;
+            }
+
+            if(item.isMainContact()) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     private static <T> List<T> createOneElementList(T t) {

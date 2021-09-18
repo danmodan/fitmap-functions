@@ -191,7 +191,7 @@ public class AddressService {
 
         commit(batch);
 
-        ensureOnlyOneMainAddress(superEntityId, superCollection, addresses);
+        // ensureOnlyOneMainAddress(superEntityId, superCollection, addresses);
 
         return addresses;
 
@@ -309,7 +309,7 @@ public class AddressService {
 
         commit(batch);
 
-        ensureOnlyOneMainAddress(superEntityId, superCollection, addresses);
+        // ensureOnlyOneMainAddress(superEntityId, superCollection, addresses);
 
         return addresses;
 
