@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -17,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.google.cloud.firestore.annotation.Exclude;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -122,4 +125,15 @@ public class Student {
         return true;
     }
 
+    public Optional<Address> findMainAddress() {
+
+        if(CollectionUtils.isEmpty(addresses)) {
+            return Optional.empty();
+        }
+
+        return addresses
+            .stream()
+            .filter(Address::isMainAddress)
+            .findFirst();
+    }
 }

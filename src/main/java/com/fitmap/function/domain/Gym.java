@@ -263,4 +263,15 @@ public class Gym {
         return true;
     }
 
+    public Optional<Address> findMainAddress() {
+
+        if(CollectionUtils.isEmpty(addresses)) {
+            return Optional.empty();
+        }
+
+        return addresses
+            .stream()
+            .filter(Address::isMainAddress)
+            .findFirst();
+    }
 }

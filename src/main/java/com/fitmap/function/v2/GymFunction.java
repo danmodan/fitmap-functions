@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolationException;
 
 import com.fitmap.function.config.SystemTimeZoneConfig;
-import com.fitmap.function.domain.Address;
 import com.fitmap.function.domain.Contact;
 import com.fitmap.function.domain.Gym;
 import com.fitmap.function.exception.TerminalException;
@@ -152,21 +151,16 @@ public class GymFunction implements HttpFunction {
     private static void updateAddresses(Gym current, Gym toUpdate) {
 
         var gymId = current.getId();
-        var currentAddresses = current.getAddresses();
+        var mainAddress = current.findMainAddress();
         var toUpdateAddresses = toUpdate.getAddresses();
 
-        if(toUpdateAddresses.isEmpty() && !currentAddresses.isEmpty()) {
+        if(toUpdateAddresses.isEmpty() && mainAddress.isPresent()) {
 
-            var addressesIds = currentAddresses
-                .stream()
-                .map(Address::getId)
-                .collect(Collectors.toList());
-
-            AddressService.delete(gymId, Gym.GYMS_COLLECTION, addressesIds);
+            AddressService.delete(gymId, Gym.GYMS_COLLECTION, List.of(mainAddress.get().getId()));
             return;
         }
 
-        if(currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+        if(mainAddress.isEmpty() && !toUpdateAddresses.isEmpty()) {
 
             toUpdateAddresses.forEach(a -> a.setMainAddress(true));
 
@@ -174,11 +168,11 @@ public class GymFunction implements HttpFunction {
             return;
         }
 
-        if(!currentAddresses.isEmpty() && !toUpdateAddresses.isEmpty()) {
+        if(mainAddress.isPresent() && !toUpdateAddresses.isEmpty()) {
 
             toUpdateAddresses.forEach(a -> {
                 a.setMainAddress(true);
-                a.setId(currentAddresses.get(0).getId());
+                a.setId(mainAddress.get().getId());
             });
 
             AddressService.edit(gymId, Gym.GYMS_COLLECTION, toUpdateAddresses);
