@@ -184,19 +184,20 @@ public class SportFunction implements HttpFunction {
             result = SportService.findAll();
         }
 
-        var filtered = result
+        /*var filtered = result
             .stream()
             .filter(sport -> sport.isLaguageSupported(locale))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList());*/
 
-        if(CollectionUtils.isNotEmpty(filtered)) {
+        if(CollectionUtils.isNotEmpty(result)) {
 
-            return filtered;
+            return result;
         }
 
-        return result
+        /*return result
             .stream()
             .filter(sport -> sport.isLaguageSupported("en"))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList());*/
+        return Collections.emptyList();
     }
 }

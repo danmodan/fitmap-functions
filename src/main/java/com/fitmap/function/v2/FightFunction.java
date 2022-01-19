@@ -184,19 +184,20 @@ public class FightFunction implements HttpFunction {
             result = FightService.findAll();
         }
 
-        var filtered = result
+        /*var filtered = result
             .stream()
             .filter(fight -> fight.isLaguageSupported(locale))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList());*/
 
-        if(CollectionUtils.isNotEmpty(filtered)) {
+        if(CollectionUtils.isNotEmpty(result)) {
 
-            return filtered;
+            return result;
         }
 
-        return result
+        /*return result
             .stream()
             .filter(fight -> fight.isLaguageSupported("en"))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList());*/
+        return Collections.emptyList();
     }
 }

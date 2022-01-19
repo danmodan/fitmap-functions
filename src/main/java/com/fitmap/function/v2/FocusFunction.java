@@ -184,19 +184,20 @@ public class FocusFunction implements HttpFunction {
             result = FocusService.findAll();
         }
 
-        var filtered = result
+        /*var filtered = result
             .stream()
             .filter(focus -> focus.isLaguageSupported(locale))
             .collect(Collectors.toList());
+        */
+        if(CollectionUtils.isNotEmpty(result)) {
 
-        if(CollectionUtils.isNotEmpty(filtered)) {
-
-            return filtered;
+            return result;
         }
 
-        return result
+        /*return result
             .stream()
             .filter(focus -> focus.isLaguageSupported("en"))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList());*/
+        return Collections.emptyList();
     }
 }
